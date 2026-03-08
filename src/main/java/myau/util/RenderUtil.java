@@ -750,6 +750,38 @@ public class RenderUtil {
         }
     }
 
+    public static void drawRect(double left, double top, double right, double bottom, int color) {
+        if (left < right) {
+            double i = left;
+            left = right;
+            right = i;
+        }
+        if (top < bottom) {
+            double j = top;
+            top = bottom;
+            bottom = j;
+        }
+        float f = (float) (color >> 24 & 255) / 255.0F;
+        float g = (float) (color >> 16 & 255) / 255.0F;
+        float h = (float) (color >> 8 & 255) / 255.0F;
+        float j = (float) (color & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.color(g, h, j, f);
+        worldRenderer.begin(7, DefaultVertexFormats.POSITION);
+        worldRenderer.pos(left, bottom, 0.0D).endVertex();
+        worldRenderer.pos(right, bottom, 0.0D).endVertex();
+        worldRenderer.pos(right, top, 0.0D).endVertex();
+        worldRenderer.pos(left, top, 0.0D).endVertex();
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+
     static final class EnchantmentMap extends HashMap<Integer, EnchantmentData> {
         EnchantmentMap() {
             this.put(0, new EnchantmentData("Pr", 4));

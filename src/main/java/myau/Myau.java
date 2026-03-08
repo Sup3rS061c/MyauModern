@@ -2,7 +2,6 @@ package myau;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.ksyz.accountmanager.AccountManager;
 import myau.command.CommandManager;
 import myau.command.commands.*;
 import myau.config.Config;
@@ -101,8 +100,9 @@ public class Myau {
         moduleManager.modules.put(InvWalk.class, new InvWalk());
         moduleManager.modules.put(Criticals.class, new Criticals());
         moduleManager.modules.put(FastBow.class, new FastBow());
-        moduleManager.modules.put(SwingSpeed.class, new SwingSpeed());
         moduleManager.modules.put(BlockHit.class, new BlockHit());
+        moduleManager.modules.put(ThrowAura.class, new ThrowAura());
+        moduleManager.modules.put(ESP2D.class, new ESP2D());
         moduleManager.modules.put(ClientSpoofer.class, new ClientSpoofer());
         moduleManager.modules.put(ItemESP.class, new ItemESP());
         moduleManager.modules.put(Jesus.class, new Jesus());
@@ -130,6 +130,7 @@ public class Myau {
         moduleManager.modules.put(Reach.class, new Reach());
         moduleManager.modules.put(Refill.class, new Refill());
         moduleManager.modules.put(SafeWalk.class, new SafeWalk());
+        moduleManager.modules.put(DynamicIsland.class, new DynamicIsland());
         moduleManager.modules.put(Scaffold.class, new Scaffold());
         moduleManager.modules.put(AutoBlockIn.class, new AutoBlockIn());
         moduleManager.modules.put(SeasonDisplay.class, new SeasonDisplay());
@@ -202,6 +203,5 @@ public class Myau {
             version = "dev";
         }
 
-        AccountManager.init();
     }
 }

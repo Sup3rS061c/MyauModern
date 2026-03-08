@@ -6,34 +6,40 @@ import org.lwjgl.opengl.GL11;
 public class RoundedUtils {
 
     public static void drawRoundedRect(float x, float y, float width, float height, float radius, int color) {
-        float r = (color >> 16 & 0xFF) / 255f;
-        float g = (color >> 8  & 0xFF) / 255f;
-        float b = (color       & 0xFF) / 255f;
-        float a = (color >> 24 & 0xFF) / 255f;
+
+        radius = Math.min(radius, Math.min(width / 2f, height / 2f)); // prevent broken radius
+
+        float a = (color >> 24 & 255) / 255f;
+        float r = (color >> 16 & 255) / 255f;
+        float g = (color >> 8  & 255) / 255f;
+        float b = (color       & 255) / 255f;
 
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
+
         GlStateManager.tryBlendFuncSeparate(
                 GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA,
                 GL11.GL_ONE, GL11.GL_ZERO
         );
+
         GL11.glColor4f(r, g, b, a);
 
-        // Center fill (excluding corners)
-        drawQuad(x + radius, y, x + width - radius, y + height);          // middle vertical strip
-        drawQuad(x, y + radius, x + radius, y + height - radius);         // left strip
-        drawQuad(x + width - radius, y + radius, x + width, y + height - radius); // right strip
+        // Center rectangles
+        drawQuad(x + radius, y, x + width - radius, y + height);
+        drawQuad(x, y + radius, x + radius, y + height - radius);
+        drawQuad(x + width - radius, y + radius, x + width, y + height - radius);
 
-        // Four rounded corners
-        drawCorner(x + radius,         y + radius,          radius, 180, 270); // top-left
-        drawCorner(x + width - radius, y + radius,          radius, 270, 360); // top-right
-        drawCorner(x + radius,         y + height - radius, radius,  90, 180); // bottom-left
-        drawCorner(x + width - radius, y + height - radius, radius,   0,  90); // bottom-right
+        // Corners
+        drawCorner(x + radius, y + radius, radius, 180, 270);
+        drawCorner(x + width - radius, y + radius, radius, 270, 360);
+        drawCorner(x + radius, y + height - radius, radius, 90, 180);
+        drawCorner(x + width - radius, y + height - radius, radius, 0, 90);
 
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
-        GL11.glColor4f(1f, 1f, 1f, 1f); // ✅ reset color
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+
         GlStateManager.popMatrix();
     }
 
@@ -46,18 +52,43 @@ public class RoundedUtils {
         GL11.glEnd();
     }
 
-    private static void drawCorner(float cx, float cy, float radius, int startAngle, int endAngle) {
+    private static void drawCorner(float cx, float cy, float radius, int start, int end) {
+
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
         GL11.glVertex2f(cx, cy);
-        for (int i = startAngle; i <= endAngle; i += 5) {
-            double angle = Math.toRadians(i);
-            GL11.glVertex2f(cx + (float)(Math.cos(angle) * radius),
-                    cy + (float)(Math.sin(angle) * radius));
+
+        for (int i = start; i <= end; i += 3) { // smoother corners
+            double rad = Math.toRadians(i);
+            GL11.glVertex2f(
+                    cx + (float) Math.cos(rad) * radius,
+                    cy + (float) Math.sin(rad) * radius
+            );
         }
+
         GL11.glEnd();
     }
 
-    public static void drawOutlineRect(float v, float v1, float v2, float v3, float v4, int i, int rgb) {
+    public static void drawOutlineRect(float x, float y, float width, float height, float lineWidth, int color) {
 
+        float a = (color >> 24 & 255) / 255f;
+        float r = (color >> 16 & 255) / 255f;
+        float g = (color >> 8  & 255) / 255f;
+        float b = (color       & 255) / 255f;
+
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GL11.glLineWidth(lineWidth);
+
+        GL11.glColor4f(r, g, b, a);
+
+        GL11.glBegin(GL11.GL_LINE_LOOP);
+        GL11.glVertex2f(x, y);
+        GL11.glVertex2f(x + width, y);
+        GL11.glVertex2f(x + width, y + height);
+        GL11.glVertex2f(x, y + height);
+        GL11.glEnd();
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
     }
 }

@@ -1,168 +1,184 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package myau.module.modules;
 
-import java.awt.Color;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import myau.Myau;
 import myau.event.EventTarget;
 import myau.events.Render2DEvent;
 import myau.module.Module;
 import myau.property.properties.BooleanProperty;
-import myau.property.properties.IntProperty;
 import myau.property.properties.ModeProperty;
-import myau.util.RenderUtil;
+import myau.property.properties.TextProperty;
+import myau.util.font.FontManager;
+import myau.util.font.impl.FontRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
-import myau.font.CFontRenderer;
-import myau.font.CFont;
-import myau.font.FontProcess;
-import myau.property.properties.*;
-
-
-import java.awt.*;
 
 public class WaterMark extends Module {
-    CFontRenderer fontRenderer = FontProcess.getFont("sans");
     private static final Minecraft mc = Minecraft.getMinecraft();
-    private static final Color ACCENT_PINK = new Color(255, 100, 150);
-    private static final Color ACCENT_PURPLE = new Color(170, 100, 255);
-    public final ModeProperty style = new ModeProperty("style", 0, new String[]{"SIMPLE", "BOX"});
-    public final BooleanProperty showTime = new BooleanProperty("time", true);
-    public final BooleanProperty showFps = new BooleanProperty("fps", false);
-    public final BooleanProperty showName = new BooleanProperty("show-name", false);
-    public final IntProperty posX = new IntProperty("x", 4, 0, 500);
-    public final IntProperty posY = new IntProperty("y", 4, 0, 500);
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+    public final ModeProperty mode = new ModeProperty("Mode", 0, new String[]{"Exhibition", "Modern"});
+
+    public final TextProperty modernText = new TextProperty("Text", "OpenMyau+", () -> mode.getValue() == 1);
+    public final BooleanProperty shadow = new BooleanProperty("Shadow", true, () -> mode.getValue() == 1);
+    public final BooleanProperty enableGlow = new BooleanProperty("Glow", true);
 
     public WaterMark() {
-        super("WaterMark", true, true);
+        super("WaterMark", false, false);
     }
 
-    private ResourceLocation getPlayerSkin() {
-        if (mc.thePlayer == null) {
-            return null;
-        } else {
-            try {
-                NetworkPlayerInfo playerInfo = mc.getNetHandler().getPlayerInfo(mc.thePlayer.getName());
-                if (playerInfo != null) {
-                    return playerInfo.getLocationSkin();
-                }
-            } catch (Exception ignored) {
+    private FontRenderer getCustomFont() {
+        HUD hud = (HUD) Myau.moduleManager.getModule("HUD");
+        if (hud != null) {
+            switch (hud.fontMode.getValue()) {
+                case 1:
+                    if (FontManager.productSans20 != null) return FontManager.productSans20;
+                    break;
+                case 2:
+                    if (FontManager.regular22 != null) return FontManager.regular22;
+                    break;
+                case 3:
+                    if (FontManager.tenacity20 != null) return FontManager.tenacity20;
+                    break;
+                case 4:
+                    if (FontManager.vision20 != null) return FontManager.vision20;
+                    break;
+                case 5:
+                    if (FontManager.nbpInforma20 != null) return FontManager.nbpInforma20;
+                    break;
+                case 6:
+                    if (FontManager.tahomaBold20 != null) return FontManager.tahomaBold20;
+                    break;
             }
+        }
+        return null;
+    }
 
-            return null;
+    private float getStringWidth(String text) {
+        FontRenderer fr = getCustomFont();
+        if (fr != null) {
+            return (float) fr.getStringWidth(text);
+        }
+        return mc.fontRendererObj.getStringWidth(text);
+    }
+
+    private void drawStringWithShadow(String text, float x, float y, int color) {
+        FontRenderer fr = getCustomFont();
+        if (fr != null) {
+            fr.drawStringWithShadow(text, x, y, color);
+        } else {
+            mc.fontRendererObj.drawStringWithShadow(text, x, y, color);
         }
     }
 
     @EventTarget
     public void onRender2D(Render2DEvent event) {
-        if (this.isEnabled() && mc.thePlayer != null && !mc.gameSettings.showDebugInfo) {
-            ScaledResolution sr = new ScaledResolution(mc);
-            String clientName = "OpenMyau+";
-            String time = this.timeFormat.format(new Date());
-            String fps = Minecraft.getDebugFPS() + " fps";
-            StringBuilder display = new StringBuilder(clientName);
-            if (this.showTime.getValue()) {
-                display.append(" | ").append(time);
-            }
+        if (!this.isEnabled()) return;
 
-            if (this.showFps.getValue()) {
-                display.append(" | ").append(fps);
-            }
-
-            String text = display.toString();
-            float x = (float) this.posX.getValue();
-            float y = (float) this.posY.getValue();
-            int textWidth = mc.fontRendererObj.getStringWidth(text);
-
-            GlStateManager.pushMatrix();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-            if (this.style.getValue() == 1) {
-                RenderUtil.enableRenderState();
-                float boxWidth = (float) (textWidth + 10);
-                float boxHeight = 14.0F;
-                int bgColor = (new Color(12, 12, 16, 200)).getRGB();
-                RenderUtil.drawRect(x, y, x + boxWidth, y + boxHeight, bgColor);
-                int accentColor = ACCENT_PINK.getRGB();
-                RenderUtil.drawRect(x, y + 2.0F, x + 2.0F, y + boxHeight - 2.0F, accentColor);
-                RenderUtil.disableRenderState();
-
-                mc.fontRendererObj.drawStringWithShadow(text, x + 5.0F, y + 3.0F, (new Color(255, 255, 255)).getRGB());
-
-                if (this.showName.getValue() && mc.thePlayer != null) {
-                    String playerName = mc.thePlayer.getName();
-                    int nameWidth = mc.fontRendererObj.getStringWidth(playerName);
-                    int faceSize = 14;
-                    float nameBoxWidth = (float) (nameWidth + faceSize + 12);
-                    float nameBoxHeight = (float) (faceSize + 4);
-                    float nameY = y + boxHeight + 4.0F;
-                    RenderUtil.enableRenderState();
-                    RenderUtil.drawRect(x, nameY, x + nameBoxWidth, nameY + nameBoxHeight, bgColor);
-                    RenderUtil.drawRect(x, nameY + 2.0F, x + 2.0F, nameY + nameBoxHeight - 2.0F, ACCENT_PURPLE.getRGB());
-                    RenderUtil.disableRenderState();
-                    ResourceLocation skin = this.getPlayerSkin();
-                    if (skin != null) {
-                        GlStateManager.pushMatrix();
-                        GlStateManager.enableBlend();
-                        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                        mc.getTextureManager().bindTexture(skin);
-                        Gui.drawScaledCustomSizeModalRect((int) (x + 4.0F), (int) (nameY + 2.0F), 8.0F, 8.0F, 8, 8, faceSize, faceSize, 64.0F, 64.0F);
-                        Gui.drawScaledCustomSizeModalRect((int) (x + 4.0F), (int) (nameY + 2.0F), 40.0F, 8.0F, 8, 8, faceSize, faceSize, 64.0F, 64.0F);
-                        GlStateManager.popMatrix();
-                    }
-
-                    mc.fontRendererObj.drawStringWithShadow(playerName, x + 6.0F + (float) faceSize, nameY + (nameBoxHeight - 8.0F) / 2.0F, (new Color(255, 255, 255)).getRGB());
-                }
-            } else {
-                // SIMPLE style
-                int pinkColor = ACCENT_PINK.getRGB();
-                int whiteColor = (new Color(200, 200, 200)).getRGB();
-                mc.fontRendererObj.drawStringWithShadow(clientName, x, y, pinkColor);
-                float var24 = x + (float) fontRenderer.getStringWidth(clientName);
-                if (this.showTime.getValue()) {
-                    mc.fontRendererObj.drawStringWithShadow(" | ", var24, y, whiteColor);
-                    var24 += (float) mc.fontRendererObj.getStringWidth(" | ");
-                    mc.fontRendererObj.drawStringWithShadow(time, var24, y, whiteColor);
-                    var24 += (float) mc.fontRendererObj.getStringWidth(time);
-                }
-
-                if (this.showFps.getValue()) {
-                    mc.fontRendererObj.drawStringWithShadow(" | ", var24, y, whiteColor);
-                    var24 += (float) mc.fontRendererObj.getStringWidth(" | ");
-                    mc.fontRendererObj.drawStringWithShadow(fps, var24, y, whiteColor);
-                }
-
-                if (this.showName.getValue() && mc.thePlayer != null) {
-                    String playerName = mc.thePlayer.getName();
-                    int faceSize = 10;
-                    ResourceLocation skin = this.getPlayerSkin();
-                    if (skin != null) {
-                        GlStateManager.pushMatrix();
-                        GlStateManager.enableBlend();
-                        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                        mc.getTextureManager().bindTexture(skin);
-                        Gui.drawScaledCustomSizeModalRect((int) x, (int) (y + 12.0F), 8.0F, 8.0F, 8, 8, faceSize, faceSize, 64.0F, 64.0F);
-                        Gui.drawScaledCustomSizeModalRect((int) x, (int) (y + 12.0F), 40.0F, 8.0F, 8, 8, faceSize, faceSize, 64.0F, 64.0F);
-                        GlStateManager.popMatrix();
-                    }
-
-                    mc.fontRendererObj.drawStringWithShadow(playerName, x + (float) faceSize + 3.0F, y + 13.0F, ACCENT_PURPLE.getRGB());
-                }
-            }
-
-            GlStateManager.disableBlend();
-            GlStateManager.popMatrix();
+        if (mode.getValue() == 0) {
+            renderExhibition();
+        } else {
+            renderModern();
         }
+    }
+
+    private void renderModern() {
+        FontRenderer fr = FontManager.nunitoBold48;
+        boolean customFont = fr != null;
+
+        HUD hud = (HUD) Myau.moduleManager.getModule("HUD");
+
+        String text = modernText.getValue();
+        float x = 4.0f;
+        float y = 4.0f;
+        long time = System.currentTimeMillis();
+
+        GlStateManager.pushMatrix();
+
+        char[] characters = text.toCharArray();
+        float currentX = x;
+
+        for (int i = 0; i < characters.length; i++) {
+            String charStr = String.valueOf(characters[i]);
+
+            int color = 0xFFFFFFFF;
+            if (hud != null) {
+                long offset = (long) (i * hud.colorDistance.getValue());
+                color = hud.getColor(time, offset).getRGB();
+            }
+
+            if (customFont) {
+                if (shadow.getValue()) {
+                    fr.drawStringWithShadow(charStr, currentX, y, color);
+                } else {
+                    fr.drawString(charStr, currentX, y, color);
+                }
+                currentX += (float) fr.getStringWidth(charStr);
+            } else {
+                mc.fontRendererObj.drawString(charStr, currentX, y, color, shadow.getValue());
+                currentX += mc.fontRendererObj.getStringWidth(charStr);
+            }
+        }
+
+        GlStateManager.popMatrix();
+    }
+
+    private void renderExhibition() {
+        int fps = Minecraft.getDebugFPS();
+        int ping = 0;
+
+        if (mc.thePlayer != null && mc.theWorld != null) {
+            if (mc.thePlayer.sendQueue != null && mc.thePlayer.sendQueue.getPlayerInfo(mc.thePlayer.getUniqueID()) != null) {
+                ping = mc.thePlayer.sendQueue.getPlayerInfo(mc.thePlayer.getUniqueID()).getResponseTime();
+            }
+        }
+
+        String exhibitionText = "E";
+        String restText = "xhibition ";
+        String fpsValue = fps + "FPS";
+        String pingValue = ping + "ms";
+
+        HUD hud = (HUD) Myau.moduleManager.modules.get(HUD.class);
+
+        float x = 2.0f;
+        float y = 2.0f;
+
+        if (getCustomFont() != null) {
+            y += 1.0f;
+        }
+
+        GlStateManager.pushMatrix();
+
+        long time = System.currentTimeMillis();
+        int rainbowColor = hud != null ? hud.getColor(time).getRGB() : 0xFFFFFFFF;
+
+        drawStringWithShadow(exhibitionText, x, y, rainbowColor);
+        float currentX = x + getStringWidth(exhibitionText);
+
+        int whiteColor = 0xFFFFFFFF;
+        drawStringWithShadow(restText, currentX, y, whiteColor);
+        currentX += getStringWidth(restText);
+
+        int grayColor = 0xFFAAAAAA;
+        drawStringWithShadow("[", currentX, y, grayColor);
+        currentX += getStringWidth("[");
+
+        drawStringWithShadow(fpsValue, currentX, y, whiteColor);
+        currentX += getStringWidth(fpsValue);
+
+        drawStringWithShadow("]", currentX, y, grayColor);
+        currentX += getStringWidth("]");
+
+        String space = " ";
+        drawStringWithShadow(space, currentX, y, whiteColor);
+        currentX += getStringWidth(space);
+
+        drawStringWithShadow("[", currentX, y, grayColor);
+        currentX += getStringWidth("[");
+
+        drawStringWithShadow(pingValue, currentX, y, whiteColor);
+        currentX += getStringWidth(pingValue);
+
+        drawStringWithShadow("]", currentX, y, grayColor);
+
+        GlStateManager.popMatrix();
     }
 }

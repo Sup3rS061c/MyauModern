@@ -4,6 +4,7 @@ import myau.event.EventManager;
 import myau.event.EventTarget;
 import myau.event.events.EventPlayerKill;
 import myau.events.Render2DEvent; // Correct import for Render2DEvent
+import myau.util.RoundedUtils;
 import myau.module.Module;
 import myau.property.properties.LongProperty;
 import myau.property.properties.IntProperty;
@@ -88,7 +89,7 @@ public class SeasonDisplay extends Module {
         int bgColor = new Color(18, 18, 22, 215).getRGB();
         int radius = 6;
         // Rounded background box
-        RenderUtil.drawRoundedRect(x, y, boxWidth, boxHeight, radius, bgColor);
+        RoundedUtils.drawRoundedRect(x, y, boxWidth, boxHeight, radius, bgColor);
 
         // Title underline (like Tenacity Statistics)
         int titleWidth = fr.getStringWidth(title);

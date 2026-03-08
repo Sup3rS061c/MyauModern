@@ -21,4 +21,6 @@ public interface IAccessorEntityPlayer {
 
     @Accessor
     void setItemInUseCount(int integer);
+    @Accessor("speedInAir")
+    void setSpeedInAir(float speed);
 }

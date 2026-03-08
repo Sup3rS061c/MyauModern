@@ -24,7 +24,7 @@ import java.util.List;
 public class ClickGui extends GuiScreen {
     CFontRenderer fontRenderer = FontProcess.getFont("sans");
     private static ClickGui instance;
-    private final File configFile = new File("./config/Myau/", "clickgui.txt");
+    private final File configFile = new File("./config/OpenMyau-plus/", "clickgui.txt");
     private final ArrayList<CategoryComponent> categoryList;
 
     public ClickGui() {
@@ -75,7 +75,6 @@ public class ClickGui extends GuiScreen {
         List<Module> renderModules = new ArrayList<>();
         renderModules.add(Myau.moduleManager.getModule(ESP.class));
         renderModules.add(Myau.moduleManager.getModule(Chams.class));
-        renderModules.add(Myau.moduleManager.getModule(SwingSpeed.class));
         renderModules.add(Myau.moduleManager.getModule(FullBright.class));
         renderModules.add(Myau.moduleManager.getModule(Tracers.class));
         renderModules.add(Myau.moduleManager.getModule(NameTags.class));
@@ -94,6 +93,8 @@ public class ClickGui extends GuiScreen {
         renderModules.add(Myau.moduleManager.getModule(FPScounter.class));
         renderModules.add(Myau.moduleManager.getModule(WaterMark.class));
         renderModules.add(Myau.moduleManager.getModule(HitParticleEffects.class));
+        renderModules.add(Myau.moduleManager.getModule(DynamicIsland.class));
+        renderModules.add(Myau.moduleManager.getModule(ESP2D.class));
         renderModules.add(Myau.moduleManager.getModule(TeamHealthDisplay.class));
         renderModules.add(Myau.moduleManager.getModule(SeasonDisplay.class));
 
@@ -114,6 +115,7 @@ public class ClickGui extends GuiScreen {
         playerModules.add(Myau.moduleManager.getModule(AntiDebuff.class));
         playerModules.add(Myau.moduleManager.getModule(FlagDetector.class));  // i mean this use S08PacketPlayerPosLook so it suck
         playerModules.add(Myau.moduleManager.getModule(AutoGapple.class));
+        playerModules.add(Myau.moduleManager.getModule(ThrowAura.class));
 
         List<Module> miscModules = new ArrayList<>();
         miscModules.add(Myau.moduleManager.getModule(Spammer.class));
