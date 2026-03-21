@@ -1,30 +1,67 @@
 # Open Myau Plus
 
-![Preview](/images/image3.png)
+"Preview" (/images/image3.png)
 
-[Myau Client](https://myau.sell.app/),  OpenMyau But Better.
+Open Myau Plus is an enhanced version of the original OpenMyau client, built with additional features, optimizations, and quality-of-life improvements. This project focuses on expanding the core functionality while maintaining stability and performance.
 
-Based on **`OpenMyau`**, with added features and improvements not found in the original, focused on expanding and refining the original)
+🔗 Official Client: https://myau.sell.app/
 
-## Changes
+---
 
-* Added Click GUI (ported from Raven B3 by blowsy)
-* Fixed bugs
+# ✨ Features & Improvements
 
-If you encounter an issue or have a feature suggestion, please [create an issue](https://github.com/IamNespola/OpenMyau-Plus/issues).
+- Added Click GUI (ported from Raven B3 by blowsy)
+- Various bug fixes and performance improvements
+- Enhanced overall user experience compared to the base version
 
-## Building
+---
 
-```bash
-./gradlew build
-```
+# 📌 About
 
-## Contributing
+This project is based on OpenMyau, with the goal of refining and extending its capabilities beyond the original implementation.
 
-You can open an issue or submit a pull request to help improve Open Myau.
+---
 
-If you’re interested in co-developing or have questions, feel free to reach out:
+# 🐛 Issues & Suggestions
 
-* Discord: https://dsc.gg/nespola or @nespola1
+If you encounter any bugs or have ideas for new features, feel free to open an issue:
 
+👉 https://github.com/IamNespola/OpenMyau-Plus/issues
 
+---
+
+# ⚙️ Building
+
+To build the project, run:
+
+`git clone https://github.com/IamNespola/OpenMyau-Plus.git
+cd OpenMyau-Plus
+./gradlew build ` 
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome! You can:
+
+- Open an issue
+- Submit a pull request
+
+---
+# ⭐ Support
+
+If you like this project, consider giving it a ⭐ on GitHub — it really helps!
+---
+
+# 📬 Contact
+
+If you're interested in collaborating or have any questions, feel free to reach out:
+
+- Discord: https://dsc.gg/nespola
+- Username: @nespola1
+
+---
+
+# © License
+
+This project follows the same licensing terms as the original OpenMyau project unless stated otherwise.
