@@ -2,7 +2,7 @@
 
 ![Preview](/images/image3.png)
  
-[Myau Client](https://myau.sell.app/),  OpenMyau But Better.
+[Myau Client](https://myau.sell.app/),  OpenMyau But Better. 
 
 
 Open Myau Plus is an enhanced version of the original OpenMyau client, built with additional features, optimizations, and quality-of-life improvements. This project focuses on expanding the core functionality while maintaining stability and performance.
@@ -37,9 +37,11 @@ If you encounter any bugs or have ideas for new features, feel free to open an i
 
 To build the project, run:
 
-`git clone https://github.com/IamNespola/OpenMyau-Plus.git`
-`cd OpenMyau-Plus`
-`./gradlew build ` 
+```bash
+git clone https://github.com/IamNespola/OpenMyau-Plus.git
+cd OpenMyau-Plus
+./gradlew build
+```
 
 ---
 
