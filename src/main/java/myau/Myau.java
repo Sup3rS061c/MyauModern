@@ -80,6 +80,7 @@ public class Myau {
         moduleManager.modules.put(Chams.class, new Chams());
         moduleManager.modules.put(WaterMark.class, new WaterMark());
         moduleManager.modules.put(ChestESP.class, new ChestESP());
+        moduleManager.modules.put(ClickGUIModule.class, new ClickGUIModule());
         moduleManager.modules.put(ChestStealer.class, new ChestStealer());
         moduleManager.modules.put(Eagle.class, new Eagle());
         moduleManager.modules.put(ESP.class, new ESP());
@@ -148,10 +149,11 @@ public class Myau {
         moduleManager.modules.put(Wtap.class, new Wtap());
         moduleManager.modules.put(Xray.class, new Xray());
         moduleManager.modules.put(TeamHealthDisplay.class, new TeamHealthDisplay());
-        // moduleManager.modules.put(.class, new myau.module.modules.());
+        moduleManager.modules.put(Animations.class, new Animations());
         moduleManager.modules.put(AutoGapple.class, new AutoGapple());
         moduleManager.modules.put(HitParticleEffects.class, new HitParticleEffects());
         commandManager.commands.add(new BindCommand());
+        commandManager.commands.add(new ClickGuiCommand());
         commandManager.commands.add(new ConfigCommand());
         commandManager.commands.add(new DenickCommand());
         commandManager.commands.add(new FriendCommand());

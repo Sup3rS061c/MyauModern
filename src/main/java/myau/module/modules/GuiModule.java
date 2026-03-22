@@ -1,13 +1,12 @@
 package myau.module.modules;
 
 import myau.module.Module;
-import myau.ui.ClickGui;
+import myau.ui.impl.clickgui.normal.ClickGuiScreen;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
 public class GuiModule extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
-    private ClickGui clickGui;
 
     public GuiModule() {
         super("ClickGui", false);
@@ -17,9 +16,7 @@ public class GuiModule extends Module {
     @Override
     public void onEnabled() {
         setEnabled(false);
-        if(clickGui == null){
-            clickGui = new ClickGui();
-        }
-        mc.displayGuiScreen(clickGui);
+        ClickGuiScreen gui = ClickGuiScreen.getInstance();
+        mc.displayGuiScreen(gui);
     }
 }
