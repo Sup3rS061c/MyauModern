@@ -174,6 +174,7 @@ public abstract class MixinMinecraft {
 
     @Inject(method = "setWindowIcon", at = @At("HEAD"), cancellable = true)
     private void setWindowIcon(CallbackInfo callbackInfo) {
+        Display.setTitle("MyauModern " + Myau.version);
         if (Util.getOSType() != Util.EnumOS.OSX) {
             final ByteBuffer[] myauFavicon = IconUtil.getFavicon();
             if (myauFavicon != null) {
