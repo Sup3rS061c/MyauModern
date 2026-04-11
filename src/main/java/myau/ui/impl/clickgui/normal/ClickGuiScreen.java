@@ -4,6 +4,7 @@ import myau.Myau;
 import myau.module.Module;
 import myau.module.modules.*;
 import myau.module.modules.Timer;
+import myau.module.modules.chatting.ChattingModule;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.settings.KeyBinding;
@@ -102,7 +103,8 @@ public class ClickGuiScreen extends GuiScreen {
                 Myau.moduleManager.getModule(ESP2D.class),
                 Myau.moduleManager.getModule(TeamHealthDisplay.class),
                 Myau.moduleManager.getModule(SeasonDisplay.class),
-                Myau.moduleManager.getModule(Animations.class)
+                Myau.moduleManager.getModule(Animations.class),
+                Myau.moduleManager.getModule(ChattingModule.class)
         );
 
         List<Module> playerModules = Arrays.asList(

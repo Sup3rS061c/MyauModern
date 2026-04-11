@@ -11,6 +11,7 @@ import myau.management.*;
 import myau.module.Module;
 import myau.module.ModuleManager;
 import myau.module.modules.*;
+import myau.module.modules.chatting.ChattingModule;
 import myau.property.Property;
 import myau.property.PropertyManager;
 import myau.util.font.FontManager;
@@ -156,6 +157,8 @@ public class Myau {
         moduleManager.modules.put(Animations.class, new Animations());
         moduleManager.modules.put(AutoGapple.class, new AutoGapple());
         moduleManager.modules.put(HitParticleEffects.class, new HitParticleEffects());
+        moduleManager.modules.put(ChattingModule.class, new ChattingModule());
+
         commandManager.commands.add(new BindCommand());
         commandManager.commands.add(new ClickGuiCommand());
         commandManager.commands.add(new ConfigCommand());
