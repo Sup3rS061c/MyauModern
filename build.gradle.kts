@@ -93,8 +93,7 @@ tasks.withType(org.gradle.jvm.tasks.Jar::class) {
         // If you don't want mixins, remove these lines
         this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
         this["MixinConfigs"] = "mixins.$modid.json"
-        if (transformerFile.exists())
-            this["FMLAT"] = "${modid}_at.cfg"
+        this["FMLAT"] = "${modid}_at.cfg"
     }
 }
 tasks.processResources {
@@ -105,7 +104,7 @@ tasks.processResources {
     filesMatching(listOf("mcmod.info", "mixins.$modid.json","version.json")) {
         expand(inputs.properties)
     }
-    rename("accesstransformer.cfg", "META-INF/${modid}_at.cfg")
+    rename("${modid}_at.cfg", "META-INF/${modid}_at.cfg")
 }
 val remapJar by tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
     archiveClassifier.set("")
