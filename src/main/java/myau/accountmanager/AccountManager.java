@@ -1,9 +1,9 @@
-package me.ksyz.accountmanager;
+package myau.accountmanager;
 
 import com.google.gson.*;
-import me.ksyz.accountmanager.auth.Account;
-import me.ksyz.accountmanager.utils.Nan0EventRegister;
-import me.ksyz.accountmanager.utils.SSLUtils;
+import myau.accountmanager.auth.Account;
+import myau.accountmanager.utils.Nan0EventRegister;
+import myau.accountmanager.utils.SSLUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 

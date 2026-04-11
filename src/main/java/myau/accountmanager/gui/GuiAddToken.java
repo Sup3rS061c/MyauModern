@@ -1,11 +1,11 @@
-package me.ksyz.accountmanager.gui;
+package myau.accountmanager.gui;
 
-import me.ksyz.accountmanager.AccountManager;
-import me.ksyz.accountmanager.auth.Account;
-import me.ksyz.accountmanager.auth.MicrosoftAuth;
-import me.ksyz.accountmanager.auth.SessionManager;
-import me.ksyz.accountmanager.utils.Notification;
-import me.ksyz.accountmanager.utils.TextFormatting;
+import myau.accountmanager.AccountManager;
+import myau.accountmanager.auth.Account;
+import myau.accountmanager.auth.MicrosoftAuth;
+import myau.accountmanager.auth.SessionManager;
+import myau.accountmanager.utils.Notification;
+import myau.accountmanager.utils.TextFormatting;
 import net.minecraft.client.gui.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.lwjgl.input.Keyboard;

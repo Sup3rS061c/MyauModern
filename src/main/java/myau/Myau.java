@@ -2,6 +2,7 @@ package myau;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import myau.accountmanager.AccountManager;
 import myau.command.CommandManager;
 import myau.command.commands.*;
 import myau.config.Config;
@@ -201,7 +202,7 @@ public class Myau {
         }
         Runtime.getRuntime().addShutdownHook(new Thread(config::save));
 
-        me.ksyz.accountmanager.AccountManager.init();
+        AccountManager.init();
 
         try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(Myau.class.getResourceAsStream("/version.json")), StandardCharsets.UTF_8)) {
             JsonObject modInfo = new JsonParser().parse(reader).getAsJsonObject();

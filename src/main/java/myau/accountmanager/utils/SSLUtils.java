@@ -1,4 +1,4 @@
-package me.ksyz.accountmanager.utils;
+package myau.accountmanager.utils;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;

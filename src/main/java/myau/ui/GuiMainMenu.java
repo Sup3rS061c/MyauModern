@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import myau.accountmanager.gui.GuiAccountManager;
 import net.minecraft.client.gui.*;
 
 
@@ -191,7 +192,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
         if (button.id == 14)
         {
-            this.mc.displayGuiScreen(new me.ksyz.accountmanager.gui.GuiAccountManager(this));
+            this.mc.displayGuiScreen(new GuiAccountManager(this));
         }
 
         if (button.id == 11)

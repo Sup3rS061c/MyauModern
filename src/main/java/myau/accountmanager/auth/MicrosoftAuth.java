@@ -1,8 +1,8 @@
-package me.ksyz.accountmanager.auth;
+package myau.accountmanager.auth;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpServer;
-import me.ksyz.accountmanager.utils.SSLUtils;
+import myau.accountmanager.utils.SSLUtils;
 import net.minecraft.util.Session;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -1,8 +1,8 @@
-package me.ksyz.accountmanager.gui;
+package myau.accountmanager.gui;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.ksyz.accountmanager.auth.SessionManager;
+import myau.accountmanager.auth.SessionManager;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;

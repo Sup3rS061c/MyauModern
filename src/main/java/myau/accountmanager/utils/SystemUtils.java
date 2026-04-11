@@ -1,4 +1,4 @@
-package me.ksyz.accountmanager.utils;
+package myau.accountmanager.utils;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;

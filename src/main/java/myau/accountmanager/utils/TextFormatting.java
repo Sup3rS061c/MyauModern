@@ -1,4 +1,4 @@
-package me.ksyz.accountmanager.utils;
+package myau.accountmanager.utils;
 
 /*
  * This file is derived from https://github.com/ksyzov/AccountManager.
