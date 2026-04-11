@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.*;
@@ -159,7 +160,7 @@ public abstract class MixinGuiNewChat extends Gui {
             if (chatting$isHovered(left, top, right - left, 9)) {
                 chatting$isHovering = true;
                 chatting$lineInBounds = true;
-                args.set(4, mod.hoveredChatBackgroundColor.getColor().getRGB());
+                args.set(4, mod.hoveredChatBackgroundColor.getValue());
             }
         }
     }
@@ -201,8 +202,8 @@ public abstract class MixinGuiNewChat extends Gui {
         if (mod.chatCopy.getValue()) {
             chatting$right = right;
             boolean hovered = chatting$isHovered(posLeft, top, posRight - posLeft, 9);
-            int bgColor = hovered ? mod.chatButtonHoveredBackgroundColor.getColor().getRGB() : mod.chatButtonBackgroundColor.getColor().getRGB();
-            int btnColor = hovered ? mod.chatButtonHoveredColor.getColor().getRGB() : mod.chatButtonColor.getColor().getRGB();
+            int bgColor = hovered ? mod.chatButtonHoveredBackgroundColor.getValue() : mod.chatButtonBackgroundColor.getValue();
+            int btnColor = hovered ? mod.chatButtonHoveredColor.getValue() : mod.chatButtonColor.getValue();
 
             drawRect(posLeft, top, posRight, top + 9, bgColor);
             drawRect(posLeft + 1, top + 1, posRight - 1, top + 8, btnColor);
@@ -214,8 +215,8 @@ public abstract class MixinGuiNewChat extends Gui {
         // 删除按钮
         if (mod.chatDelete.getValue()) {
             boolean hovered = chatting$isHovered(posLeft, top, posRight - posLeft, 9);
-            int bgColor = hovered ? mod.chatButtonHoveredBackgroundColor.getColor().getRGB() : mod.chatButtonBackgroundColor.getColor().getRGB();
-            int btnColor = hovered ? mod.chatButtonHoveredColor.getColor().getRGB() : mod.chatButtonColor.getColor().getRGB();
+            int bgColor = hovered ? mod.chatButtonHoveredBackgroundColor.getValue() : mod.chatButtonBackgroundColor.getValue();
+            int btnColor = hovered ? mod.chatButtonHoveredColor.getValue() : mod.chatButtonColor.getValue();
 
             drawRect(posLeft, top, posRight, top + 9, bgColor);
             drawRect(posLeft + 1, top + 1, posRight - 1, top + 8, btnColor);

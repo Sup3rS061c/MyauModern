@@ -134,12 +134,6 @@ public class ChatTabs {
         ChatTabType current = getActiveTab();
         int nextIndex = (current.ordinal() + 1) % types.length;
         setActiveTab(types[nextIndex]);
-        
-        // Show notification
-        ChattingModule mod = ChattingModule.getInstance();
-        if (mod != null) {
-            mod.showNotification("Switched to " + types[nextIndex].getName() + " tab");
-        }
     }
     
     public static void switchToPrevTab() {
@@ -147,11 +141,6 @@ public class ChatTabs {
         ChatTabType current = getActiveTab();
         int prevIndex = (current.ordinal() - 1 + types.length) % types.length;
         setActiveTab(types[prevIndex]);
-        
-        ChattingModule mod = ChattingModule.getInstance();
-        if (mod != null) {
-            mod.showNotification("Switched to " + types[prevIndex].getName() + " tab");
-        }
     }
     
     public static void cleanup() {

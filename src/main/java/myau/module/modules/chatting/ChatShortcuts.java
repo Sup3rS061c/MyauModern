@@ -1,6 +1,6 @@
 package myau.module.modules.chatting;
 
-import myau.Myau;
+import myau.config.Config;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.util.HashMap;
@@ -111,27 +111,27 @@ public class ChatShortcuts {
     }
     
     private static String processVariables(String text) {
-        if (Myau.mc != null && Myau.mc.thePlayer != null) {
-            text = text.replace("{x}", String.valueOf((int) Myau.mc.thePlayer.posX));
-            text = text.replace("{y}", String.valueOf((int) Myau.mc.thePlayer.posY));
-            text = text.replace("{z}", String.valueOf((int) Myau.mc.thePlayer.posZ));
-            text = text.replace("%x%", String.valueOf((int) Myau.mc.thePlayer.posX));
-            text = text.replace("%y%", String.valueOf((int) Myau.mc.thePlayer.posY));
-            text = text.replace("%z%", String.valueOf((int) Myau.mc.thePlayer.posZ));
+        if (Config.mc != null && Config.mc.thePlayer != null) {
+            text = text.replace("{x}", String.valueOf((int) Config.mc.thePlayer.posX));
+            text = text.replace("{y}", String.valueOf((int) Config.mc.thePlayer.posY));
+            text = text.replace("{z}", String.valueOf((int) Config.mc.thePlayer.posZ));
+            text = text.replace("%x%", String.valueOf((int) Config.mc.thePlayer.posX));
+            text = text.replace("%y%", String.valueOf((int) Config.mc.thePlayer.posY));
+            text = text.replace("%z%", String.valueOf((int) Config.mc.thePlayer.posZ));
         }
         
-        if (Myau.mc != null) {
-            text = text.replace("{fps}", String.valueOf(Myau.mc.getDebugFPS()));
-            text = text.replace("%fps%", String.valueOf(Myau.mc.getDebugFPS()));
+        if (Config.mc != null) {
+            text = text.replace("{fps}", String.valueOf(Config.mc.getDebugFPS()));
+            text = text.replace("%fps%", String.valueOf(Config.mc.getDebugFPS()));
         }
         
-        if (Myau.mc != null && Myau.mc.getCurrentServerData() != null) {
-            text = text.replace("{ip}", Myau.mc.getCurrentServerData().serverIP);
-            text = text.replace("%ip%", Myau.mc.getCurrentServerData().serverIP);
+        if (Config.mc != null && Config.mc.getCurrentServerData() != null) {
+            text = text.replace("{ip}", Config.mc.getCurrentServerData().serverIP);
+            text = text.replace("%ip%", Config.mc.getCurrentServerData().serverIP);
         }
         
-        if (Myau.mc != null && Myau.mc.thePlayer != null && Myau.mc.thePlayer.sendQueue != null) {
-            int ping = Myau.mc.thePlayer.sendQueue.getPlayerInfo(Myau.mc.thePlayer.getUniqueID()).getResponseTime();
+        if (Config.mc != null && Config.mc.thePlayer != null && Config.mc.thePlayer.sendQueue != null) {
+            int ping = Config.mc.thePlayer.sendQueue.getPlayerInfo(Config.mc.thePlayer.getUniqueID()).getResponseTime();
             text = text.replace("{ping}", String.valueOf(ping));
             text = text.replace("%ping%", String.valueOf(ping));
         }
@@ -140,33 +140,33 @@ public class ChatShortcuts {
     }
     
     private static String getCoordinates() {
-        if (Myau.mc != null && Myau.mc.thePlayer != null) {
+        if (Config.mc != null && Config.mc.thePlayer != null) {
             return String.format("My coordinates are X: %d Y: %d Z: %d", 
-                (int) Myau.mc.thePlayer.posX,
-                (int) Myau.mc.thePlayer.posY,
-                (int) Myau.mc.thePlayer.posZ);
+                (int) Config.mc.thePlayer.posX,
+                (int) Config.mc.thePlayer.posY,
+                (int) Config.mc.thePlayer.posZ);
         }
         return "My coordinates are unknown";
     }
     
     private static String getFps() {
-        if (Myau.mc != null) {
-            return String.format("I have %d FPS", Myau.mc.getDebugFPS());
+        if (Config.mc != null) {
+            return String.format("I have %d FPS", Config.mc.getDebugFPS());
         }
         return "FPS unknown";
     }
     
     private static String getPing() {
-        if (Myau.mc != null && Myau.mc.thePlayer != null && Myau.mc.thePlayer.sendQueue != null) {
-            int ping = Myau.mc.thePlayer.sendQueue.getPlayerInfo(Myau.mc.thePlayer.getUniqueID()).getResponseTime();
+        if (Config.mc != null && Config.mc.thePlayer != null && Config.mc.thePlayer.sendQueue != null) {
+            int ping = Config.mc.thePlayer.sendQueue.getPlayerInfo(Config.mc.thePlayer.getUniqueID()).getResponseTime();
             return String.format("My ping is %dms", ping);
         }
         return "Ping unknown";
     }
     
     private static String getServerIP() {
-        if (Myau.mc != null && Myau.mc.getCurrentServerData() != null) {
-            return "Currently playing on: " + Myau.mc.getCurrentServerData().serverIP;
+        if (Config.mc != null && Config.mc.getCurrentServerData() != null) {
+            return "Currently playing on: " + Config.mc.getCurrentServerData().serverIP;
         }
         return "Not connected to a server";
     }

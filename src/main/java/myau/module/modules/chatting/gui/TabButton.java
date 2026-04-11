@@ -44,7 +44,7 @@ public class TabButton {
      */
     public boolean onClick(int mouseX, int mouseY) {
         if (isMouseOver(mouseX, mouseY)) {
-            ChatTabs.selectTab(tab);
+            ChatTabs.setActiveTab(tab);
             return true;
         }
         return false;
