@@ -60,14 +60,27 @@ public class CommandManager {
         // 分割参数
         String[] parts = withoutPrefix.split("\\s+");
 
-        if (parts.length == 1 && !withoutPrefix.contains(" ")) {
-            // 正在输入命令名 - 匹配命令名
+        // 检查是否包含空格
+        boolean hasSpace = withoutPrefix.contains(" ");
+
+        if (parts.length == 1 && !hasSpace) {
+            // 正在输入命令名 - 匹配命令名和模块名
             String partialCommand = parts[0].toLowerCase();
+
+            // 首先匹配命令名
             for (Command command : commands) {
                 for (String name : command.names) {
                     if (name.toLowerCase().startsWith(partialCommand)) {
                         completions.add("." + name);
                     }
+                }
+            }
+
+            // 然后匹配模块名（用于模块命令）
+            for (Module module : Myau.moduleManager.modules.values()) {
+                String name = module.getName();
+                if (name.toLowerCase().startsWith(partialCommand)) {
+                    completions.add("." + name);
                 }
             }
         } else {
@@ -83,11 +96,33 @@ public class CommandManager {
                 }
             }
 
+            // 如果没找到命令，检查是否是模块名（使用ModuleCommand处理）
+            if (targetCommand == null) {
+                Module module = Myau.moduleManager.getModule(commandName);
+                if (module != null) {
+                    // 这是模块命令，找到ModuleCommand
+                    for (Command command : commands) {
+                        if (command instanceof ModuleCommand) {
+                            targetCommand = command;
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (targetCommand != null) {
                 // 构建参数列表（排除命令名）
                 ArrayList<String> args = new ArrayList<>();
-                for (int i = 1; i < parts.length; i++) {
-                    args.add(parts[i]);
+                // 对于模块命令，需要把模块名作为第一个参数
+                if (targetCommand instanceof ModuleCommand && Myau.moduleManager.getModule(commandName) != null) {
+                    args.add(commandName);
+                    for (int i = 1; i < parts.length; i++) {
+                        args.add(parts[i]);
+                    }
+                } else {
+                    for (int i = 1; i < parts.length; i++) {
+                        args.add(parts[i]);
+                    }
                 }
 
                 // 如果最后一个字符是空格，表示需要补全下一个参数
@@ -99,7 +134,13 @@ public class CommandManager {
                 List<String> commandCompletions = targetCommand.tabComplete(args);
 
                 // 根据当前输入构建完整建议
-                String base = input.substring(0, input.lastIndexOf(' ') + 1);
+                int lastSpaceIndex = input.lastIndexOf(' ');
+                String base;
+                if (lastSpaceIndex >= 0) {
+                    base = input.substring(0, lastSpaceIndex + 1);
+                } else {
+                    base = "." + commandName + " ";
+                }
                 for (String completion : commandCompletions) {
                     completions.add(base + completion);
                 }
