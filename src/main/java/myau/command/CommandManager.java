@@ -11,6 +11,7 @@ import net.minecraft.network.play.client.C01PacketChatMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandManager {
     public ArrayList<Command> commands;
@@ -43,6 +44,72 @@ public class CommandManager {
         } else {
             return string.charAt(0) == '.' && Character.isLetterOrDigit(string.charAt(1));
         }
+    }
+
+    /**
+     * 获取命令自动补全建议
+     * @param input 当前输入的完整命令字符串（包含命令前缀 .）
+     * @return 补全建议列表
+     */
+    public List<String> getCompletions(String input) {
+        List<String> completions = new ArrayList<>();
+
+        // 去除命令前缀点号
+        String withoutPrefix = input.substring(1).trim();
+
+        // 分割参数
+        String[] parts = withoutPrefix.split("\\s+");
+
+        if (parts.length == 1 && !withoutPrefix.contains(" ")) {
+            // 正在输入命令名 - 匹配命令名
+            String partialCommand = parts[0].toLowerCase();
+            for (Command command : commands) {
+                for (String name : command.names) {
+                    if (name.toLowerCase().startsWith(partialCommand)) {
+                        completions.add("." + name);
+                    }
+                }
+            }
+        } else {
+            // 已经有命令名，需要获取该命令的参数补全
+            String commandName = parts[0];
+            Command targetCommand = null;
+
+            // 找到对应的命令
+            for (Command command : commands) {
+                if (command.matches(commandName)) {
+                    targetCommand = command;
+                    break;
+                }
+            }
+
+            if (targetCommand != null) {
+                // 构建参数列表（排除命令名）
+                ArrayList<String> args = new ArrayList<>();
+                for (int i = 1; i < parts.length; i++) {
+                    args.add(parts[i]);
+                }
+
+                // 如果最后一个字符是空格，表示需要补全下一个参数
+                if (input.endsWith(" ")) {
+                    args.add("");
+                }
+
+                // 获取该命令的补全建议
+                List<String> commandCompletions = targetCommand.tabComplete(args);
+
+                // 根据当前输入构建完整建议
+                String base = input.substring(0, input.lastIndexOf(' ') + 1);
+                for (String completion : commandCompletions) {
+                    completions.add(base + completion);
+                }
+            }
+        }
+
+        return completions.stream()
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     @EventTarget(Priority.HIGHEST)

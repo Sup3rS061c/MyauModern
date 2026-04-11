@@ -7,7 +7,9 @@ import myau.util.ChatUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class ToggleCommand extends Command {
     public ToggleCommand() {
@@ -42,5 +44,34 @@ public class ToggleCommand extends Command {
                 }
             }
         }
+    }
+
+    @Override
+    public List<String> tabComplete(ArrayList<String> args) {
+        List<String> completions = new ArrayList<>();
+
+        if (args.size() <= 1) {
+            // 补全模块名
+            String partial = args.isEmpty() ? "" : args.get(0).toLowerCase();
+            for (Module module : Myau.moduleManager.modules.values()) {
+                String name = module.getName();
+                if (name.toLowerCase().startsWith(partial)) {
+                    completions.add(name);
+                }
+            }
+        } else if (args.size() == 2) {
+            // 补全状态值
+            String partial = args.get(1).toLowerCase();
+            String[] states = {"on", "off", "true", "false"};
+            for (String state : states) {
+                if (state.startsWith(partial)) {
+                    completions.add(state);
+                }
+            }
+        }
+
+        return completions.stream()
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

@@ -145,4 +145,64 @@ public class BindCommand extends Command {
                 return -1;
         }
     }
+
+    @Override
+    public List<String> tabComplete(ArrayList<String> args) {
+        List<String> completions = new ArrayList<>();
+
+        if (args.size() <= 1) {
+            // 补全模块名
+            String partial = args.isEmpty() ? "" : args.get(0).toLowerCase();
+            for (Module module : Myau.moduleManager.modules.values()) {
+                String name = module.getName();
+                if (name.toLowerCase().startsWith(partial)) {
+                    completions.add(name);
+                }
+            }
+            // 添加特殊关键字
+            if ("*".startsWith(partial)) {
+                completions.add("*");
+            }
+            if ("list".startsWith(partial)) {
+                completions.add("list");
+            }
+        } else if (args.size() == 2) {
+            // 补全按键名
+            String partial = args.get(1).toLowerCase();
+
+            // 常用按键
+            String[] commonKeys = {
+                "none", "lmb", "rmb", "mmb",
+                "a", "b", "c", "d", "e", "f", "g", "h", "i", "j",
+                "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
+                "u", "v", "w", "x", "y", "z",
+                "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+                "f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8", "f9", "f10", "f11", "f12",
+                "lshift", "rshift", "lctrl", "rctrl", "lalt", "ralt",
+                "space", "tab", "enter", "backspace", "delete", "escape",
+                "up", "down", "left", "right",
+                "insert", "home", "end", "pageup", "pagedown",
+                "mouse3", "mouse4", "mouse5"
+            };
+
+            for (String key : commonKeys) {
+                if (key.startsWith(partial)) {
+                    completions.add(key);
+                }
+            }
+
+            // 键盘所有按键
+            for (int i = 0; i < 256; i++) {
+                String keyName = Keyboard.getKeyName(i);
+                if (keyName != null && !keyName.isEmpty() && keyName.toLowerCase().startsWith(partial)) {
+                    completions.add(keyName.toLowerCase());
+                }
+            }
+        }
+
+        return completions.stream()
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
 }

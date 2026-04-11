@@ -9,6 +9,7 @@ import myau.property.properties.BooleanProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class ModuleCommand extends Command {
@@ -19,6 +20,10 @@ public class ModuleCommand extends Command {
     @Override
     public void runCommand(ArrayList<String> args) {
         Module module = Myau.moduleManager.getModule(args.get(0));
+        if (module == null) {
+            ChatUtil.sendFormatted(String.format("%sModule not found (&o%s&r)&r", Myau.clientName, args.get(0)));
+            return;
+        }
         if (args.size() >= 2) {
             Property<?> property = Myau.propertyManager.getProperty(module, args.get(1));
             if (property == null) {
@@ -63,5 +68,57 @@ public class ModuleCommand extends Command {
             }
             ChatUtil.sendFormatted(String.format("%s%s has no properties&r", Myau.clientName, module.formatModule()));
         }
+    }
+
+    @Override
+    public List<String> tabComplete(ArrayList<String> args) {
+        List<String> completions = new ArrayList<>();
+
+        if (args.size() <= 1) {
+            // 补全模块名（但ModuleCommand本身已经注册为模块名）
+            String partial = args.isEmpty() ? "" : args.get(0).toLowerCase(Locale.ROOT);
+            for (Module module : Myau.moduleManager.modules.values()) {
+                String name = module.getName();
+                if (name.toLowerCase(Locale.ROOT).startsWith(partial)) {
+                    completions.add(name);
+                }
+            }
+        } else if (args.size() == 2) {
+            // 补全属性名
+            String partial = args.get(1).toLowerCase(Locale.ROOT);
+            Module module = Myau.moduleManager.getModule(args.get(0));
+            if (module != null) {
+                List<Property<?>> properties = Myau.propertyManager.properties.get(module.getClass());
+                if (properties != null) {
+                    for (Property<?> property : properties) {
+                        if (property.isVisible()) {
+                            String name = property.getName();
+                            if (name.toLowerCase(Locale.ROOT).startsWith(partial)) {
+                                completions.add(name);
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (args.size() == 3) {
+            // 补全属性值（如果是布尔类型）
+            Module module = Myau.moduleManager.getModule(args.get(0));
+            if (module != null) {
+                Property<?> property = Myau.propertyManager.getProperty(module, args.get(1));
+                if (property instanceof BooleanProperty) {
+                    String partial = args.get(2).toLowerCase(Locale.ROOT);
+                    String[] boolValues = {"true", "false", "on", "off", "1", "0"};
+                    for (String val : boolValues) {
+                        if (val.startsWith(partial)) {
+                            completions.add(val);
+                        }
+                    }
+                }
+            }
+        }
+
+        return completions.stream()
+                .sorted()
+                .collect(Collectors.toList());
     }
 }
