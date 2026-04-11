@@ -1,5 +1,8 @@
 package myau.module.modules.chatting.gui;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+
 /**
  * Generic Chat Button
  * Used for Copy, Delete, Screenshot, Search buttons
@@ -21,8 +24,11 @@ public class ChatButton {
     private boolean enabled = true;
     private int color = 0xFFFFFFFF;
     private int hoveredColor = 0xFFFFFFA0;
-    private int backgroundColor = 0x00000080;
-    private int hoveredBackgroundColor = 0xFFFFFF80;
+    private int backgroundColor = 0x80000000;
+    private int hoveredBackgroundColor = 0xA0000000;
+    
+    // 圆角半径
+    public static int cornerRadius = 2;
     
     public ChatButton(ButtonType type, int x, int y, int width, int height) {
         this.type = type;
@@ -30,6 +36,35 @@ public class ChatButton {
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+    
+    /**
+     * 绘制按钮
+     */
+    public void draw(Minecraft mc, int mouseX, int mouseY) {
+        updateHover(mouseX, mouseY);
+        
+        // 获取当前背景色
+        int bgColor = hovered ? hoveredBackgroundColor : backgroundColor;
+        if (!enabled) {
+            bgColor = 0x80404040;
+        }
+        
+        // 获取文字颜色
+        int textColor = getCurrentColor();
+        
+        // 绘制圆角背景
+        GuiHelper.drawRoundedRect(x, y, x + width, y + height, cornerRadius, bgColor);
+        
+        // 绘制图标/文字
+        FontRenderer fr = mc.fontRendererObj;
+        String icon = getIcon();
+        if (!icon.isEmpty()) {
+            int iconWidth = fr.getStringWidth(icon);
+            int iconX = x + (width - iconWidth) / 2;
+            int iconY = y + (height - fr.FONT_HEIGHT) / 2 + 1;
+            fr.drawStringWithShadow(icon, iconX, iconY, textColor);
+        }
     }
     
     /**

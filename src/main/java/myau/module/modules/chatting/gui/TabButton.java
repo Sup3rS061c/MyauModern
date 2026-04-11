@@ -1,6 +1,9 @@
 package myau.module.modules.chatting.gui;
 
 import myau.module.modules.chatting.ChatTabs;
+import myau.module.modules.chatting.ChattingModule;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 
 /**
  * Tab Button for Chat Tabs UI
@@ -15,6 +18,12 @@ public class TabButton {
     public static int color = 0xFFFFFFFF;
     public static int hoveredColor = 0xFFFFFFA0;
     public static int selectedColor = 0xFFFFFF00;
+    public static int backgroundColor = 0x80000000;
+    public static int hoveredBackgroundColor = 0xA0000000;
+    public static int selectedBackgroundColor = 0xC0000000;
+    
+    // 圆角半径
+    public static int cornerRadius = 3;
     
     public TabButton(ChatTabs.ChatTab tab, int x, int y, int width, int height) {
         this.tab = tab;
@@ -22,6 +31,38 @@ public class TabButton {
         this.y = y;
         this.width = width;
         this.height = height;
+    }
+    
+    /**
+     * 绘制按钮
+     */
+    public void draw(Minecraft mc, int mouseX, int mouseY) {
+        updateHover(mouseX, mouseY);
+        
+        // 获取当前背景色
+        int bgColor;
+        if (selected) {
+            bgColor = selectedBackgroundColor;
+        } else if (hovered) {
+            bgColor = hoveredBackgroundColor;
+        } else {
+            bgColor = backgroundColor;
+        }
+        
+        // 获取文字颜色
+        int textColor = getCurrentColor();
+        
+        // 绘制圆角背景
+        GuiHelper.drawRoundedRect(x, y, x + width, y + height, cornerRadius, bgColor);
+        
+        // 绘制文字
+        FontRenderer fr = mc.fontRendererObj;
+        String text = tab.getType().getName();
+        int textWidth = fr.getStringWidth(text);
+        int textX = x + (width - textWidth) / 2;
+        int textY = y + (height - fr.FONT_HEIGHT) / 2 + 1;
+        
+        fr.drawStringWithShadow(text, textX, textY, textColor);
     }
     
     /**

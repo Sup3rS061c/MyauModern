@@ -2,6 +2,7 @@ package myau.module.modules;
 
 import com.google.common.base.CaseFormat;
 import myau.Myau;
+import myau.enums.DelayModules;
 import myau.event.EventTarget;
 import myau.event.types.EventType;
 import myau.event.types.Priority;
@@ -12,6 +13,8 @@ import myau.property.properties.BooleanProperty;
 import myau.property.properties.FloatProperty;
 import myau.property.properties.IntProperty;
 import myau.property.properties.ModeProperty;
+import myau.property.properties.PercentProperty;
+import myau.util.ChatUtil;
 import myau.util.MoveUtil;
 import myau.util.PacketUtil;
 import myau.util.RandomUtil;
@@ -40,7 +43,7 @@ public class Velocity extends Module {
             "Vulcan", "MatrixReduce", "MatrixReducePlus", "IntaveReduce",
             "GrimC03", "Hypixel", "HypixelAir", "BlockSMC", "GrimCombat",
             "Polar", "MatrixNoXZ", "Intave13", "SmartJumpReset", "Intave14",
-            "HypixelPrediction"
+            "HypixelPrediction", "Delay"
     });
 
     public final FloatProperty horizontal = new FloatProperty("Horizontal", 0.0f, -2.0f, 2.0f, () -> mode.getValue() == 0 || mode.getValue() == 9);
@@ -75,6 +78,12 @@ public class Velocity extends Module {
     public final FloatProperty intave14Timer1 = new FloatProperty("Intave14-T1", 0.3f, 0.1f, 2.0f, () -> mode.getValue() == 23);
     public final FloatProperty intave14Timer2 = new FloatProperty("Intave14-T2", 5.0f, 1.0f, 10.0f, () -> mode.getValue() == 23);
 
+    // Delay Mode Properties (Index 25)
+    public final IntProperty delayTicks = new IntProperty("DelayTicks", 3, 1, 20, () -> mode.getValue() == 25);
+    public final PercentProperty delayChance = new PercentProperty("DelayChance", 100, () -> mode.getValue() == 25);
+    public final BooleanProperty delayFakeCheck = new BooleanProperty("DelayFakeCheck", true, () -> mode.getValue() == 25);
+    public final BooleanProperty delayDebug = new BooleanProperty("DelayDebug", false, () -> mode.getValue() == 25);
+
     private final TimerUtil velocityTimer = new TimerUtil();
     private boolean hasReceivedVelocity = false;
     private boolean jump = false;
@@ -96,6 +105,11 @@ public class Velocity extends Module {
     private int lastHurtTime = 0;
     private boolean jumpFlag = false;
 
+    // Delay Mode Variables
+    private int delayChanceCounter = 0;
+    private boolean delayActive = false;
+    private boolean reverseFlag = false;
+
     public Velocity() {
         super("Velocity", false, false);
     }
@@ -116,6 +130,11 @@ public class Velocity extends Module {
         attackTimer = -1;
         lastHurtTime = 0;
         jumpFlag = false;
+
+        // Delay Mode Reset
+        delayChanceCounter = 0;
+        delayActive = false;
+        reverseFlag = false;
     }
 
     private void reset() {
@@ -129,6 +148,11 @@ public class Velocity extends Module {
         return mc.thePlayer.isInWater() || mc.thePlayer.isInLava() || ((IAccessorEntity) mc.thePlayer).getIsInWeb();
     }
 
+    private boolean canDelay() {
+        KillAura killAura = (KillAura) Myau.moduleManager.modules.get(KillAura.class);
+        return mc.thePlayer.onGround && (killAura == null || !killAura.isEnabled() || !killAura.shouldAutoBlock());
+    }
+
     @EventTarget
     public void onUpdate(UpdateEvent event) {
         if (event.getType() == EventType.PRE) {
@@ -137,6 +161,17 @@ public class Velocity extends Module {
                 return;
 
             switch (mode.getValue()) {
+                case 25: // Delay Mode
+                    if (reverseFlag && (canDelay() || isInLiquidOrWeb() || Myau.delayManager.getDelay() >= (long) delayTicks.getValue())) {
+                        Myau.delayManager.setDelayState(false, DelayModules.VELOCITY);
+                        reverseFlag = false;
+                    }
+                    if (delayActive) {
+                        MoveUtil.setSpeed(MoveUtil.getSpeed(), MoveUtil.getMoveYaw());
+                        delayActive = false;
+                    }
+                    break;
+
                 case 24:
                     int hurtTime = player.hurtTime;
                     if (hurtTime > lastHurtTime) {
@@ -400,6 +435,31 @@ public class Velocity extends Module {
             IAccessorS12PacketEntityVelocity accessor = (IAccessorS12PacketEntityVelocity) packet;
 
             switch (mode.getValue()) {
+                case 25: // Delay Mode
+                    LongJump longJump = (LongJump) Myau.moduleManager.modules.get(LongAura.class);
+                    if (!reverseFlag
+                            && !canDelay()
+                            && !isInLiquidOrWeb()
+                            && (longJump == null || !longJump.isEnabled() || !longJump.canStartJump())) {
+                        delayChanceCounter = (delayChanceCounter % 100) + delayChance.getValue();
+                        if (delayChanceCounter >= 100) {
+                            Myau.delayManager.setDelayState(true, DelayModules.VELOCITY);
+                            Myau.delayManager.delayedPacket.offer(packet);
+                            event.setCancelled(true);
+                            reverseFlag = true;
+                            if (delayDebug.getValue()) {
+                                ChatUtil.sendFormatted(String.format("&7[&aDelay&7] &fVelocity delayed (tick: %d)", player.ticksExisted));
+                            }
+                            return;
+                        }
+                    }
+                    if (delayFakeCheck.getValue() && !allowNext) {
+                        allowNext = true;
+                        return;
+                    }
+                    allowNext = true;
+                    break;
+
                 case 24:
                     double x = (double) packet.getMotionX() / 8000.0;
                     double z = (double) packet.getMotionZ() / 8000.0;

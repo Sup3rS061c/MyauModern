@@ -1,6 +1,8 @@
 package myau.mixin;
 
+import myau.module.modules.chatting.ChatTabs;
 import myau.module.modules.chatting.ChattingModule;
+import myau.module.modules.chatting.gui.TabButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ChatLine;
 import net.minecraft.client.gui.Gui;
@@ -18,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(value = GuiNewChat.class, priority = 999)
@@ -94,12 +97,24 @@ public abstract class MixinGuiNewChat extends Gui {
     @Unique
     private final java.util.HashSet<java.lang.ref.WeakReference<ChatLine>> chatting$chatLines = new java.util.HashSet<>();
 
+    // ========== 聊天标签按钮 ==========
+    @Unique
+    private final List<TabButton> chatting$tabButtons = new ArrayList<>();
+    
+    @Unique
+    private boolean chatting$tabsInitialized = false;
+
     // ========== 聊天按钮功能 ==========
 
     @Inject(method = "drawChat", at = @At("HEAD"))
     private void onDrawChatStart(int updateCounter, CallbackInfo ci) {
         ChattingModule mod = ChattingModule.getInstance();
         if (mod == null || !mod.isEnabled()) return;
+
+        // 初始化聊天标签按钮
+        if (!chatting$tabsInitialized && mod.chatTabs.getValue()) {
+            chatting$initializeTabs();
+        }
 
         chatting$chatCheck = false;
         if (chatting$lastOpen != getChatOpen()) {
@@ -422,5 +437,80 @@ public abstract class MixinGuiNewChat extends Gui {
             return new StringSelection(actualMessage);
         }
         return null;
+    }
+
+    // ========== 聊天标签按钮功能 ==========
+
+    @Unique
+    private void chatting$initializeTabs() {
+        ChatTabs.initialize();
+        chatting$tabButtons.clear();
+        
+        int buttonWidth = 40;
+        int buttonHeight = 12;
+        int spacing = 2;
+        int startX = 2;
+        int startY = -14; // 在聊天框上方
+        
+        List<ChatTabs.ChatTab> tabs = ChatTabs.getTabs();
+        for (int i = 0; i < tabs.size(); i++) {
+            ChatTabs.ChatTab tab = tabs.get(i);
+            int x = startX + i * (buttonWidth + spacing);
+            TabButton button = new TabButton(tab, x, startY, buttonWidth, buttonHeight);
+            chatting$tabButtons.add(button);
+        }
+        
+        chatting$tabsInitialized = true;
+    }
+
+    /**
+     * 绘制聊天标签按钮 - 在 drawChat 结束时调用
+     */
+    @Inject(method = "drawChat", at = @At("RETURN"))
+    private void drawChatTabs(int updateCounter, CallbackInfo ci) {
+        ChattingModule mod = ChattingModule.getInstance();
+        if (mod == null || !mod.isEnabled() || !mod.chatTabs.getValue()) return;
+        if (!getChatOpen()) return; // 只在聊天打开时显示
+        
+        // 获取鼠标位置
+        int mouseX = Mouse.getX() * mc.currentScreen.width / mc.displayWidth;
+        int mouseY = mc.currentScreen.height - Mouse.getY() * mc.currentScreen.height / mc.displayHeight - 1;
+        
+        // 计算聊天框位置
+        net.minecraft.client.gui.ScaledResolution scaled = new net.minecraft.client.gui.ScaledResolution(mc);
+        int chatX = mod.chatPosX.getValue().intValue();
+        int chatY = scaled.getScaledHeight() + mod.chatPosY.getValue().intValue();
+        
+        // 保存 OpenGL 状态
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(chatX, chatY, 0);
+        
+        // 绘制每个标签按钮
+        for (TabButton button : chatting$tabButtons) {
+            button.draw(mc, mouseX - chatX, mouseY - chatY);
+        }
+        
+        GlStateManager.popMatrix();
+    }
+
+    /**
+     * 处理聊天标签按钮点击
+     */
+    @Unique
+    public boolean chatting$handleTabClick(int mouseX, int mouseY) {
+        ChattingModule mod = ChattingModule.getInstance();
+        if (mod == null || !mod.isEnabled() || !mod.chatTabs.getValue()) return false;
+        
+        for (TabButton button : chatting$tabButtons) {
+            if (button.onClick(mouseX, mouseY)) {
+                // 切换活动标签
+                ChatTabs.setActiveTab(button.getTab().getType());
+                
+                // 刷新聊天显示
+                mc.ingameGUI.getChatGUI().clearChatMessages();
+                return true;
+            }
+        }
+        return false;
     }
 }
