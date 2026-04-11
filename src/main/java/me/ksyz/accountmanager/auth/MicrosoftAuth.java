@@ -70,7 +70,7 @@ public final class MicrosoftAuth {
             .build();
 
     // Account Manager
-    public static String CLIENT_ID = "42a60a84-599d-44b2-a7c6-b00cdef1d6a2";
+    public static String CLIENT_ID = "44387aa2-cd6d-4cdc-b25d-2fa7eb6df546";
     public static String SCOPE = "XboxLive.signin XboxLive.offline_access";
 
     // 25565 + 10

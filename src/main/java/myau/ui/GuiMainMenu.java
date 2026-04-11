@@ -1,24 +1,19 @@
-package net.minecraft.client.gui;
+package myau.ui;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.lwjgl.util.Color;
+
+import net.minecraft.client.gui.*;
 
 
 import myau.font.FontProcess;
 import myau.util.shader.impl.MainMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -35,11 +30,7 @@ import net.minecraft.world.storage.WorldInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.util.Color;
 import org.lwjgl.util.glu.Project;
-
-import static myau.util.ColorUtil.interpolate;
 
 public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 {
@@ -88,7 +79,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
         if (this.func_183501_a())
         {
-            this.field_183503_M.updateScreen();
+            this.updateScreen();
         }
     }
 
@@ -458,7 +449,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
         if (this.func_183501_a())
         {
-            this.field_183503_M.mouseClicked(mouseX, mouseY, mouseButton);
+            this.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 
