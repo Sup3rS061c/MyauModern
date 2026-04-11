@@ -81,11 +81,8 @@ dependencies {
     shadowImpl("org.reflections:reflections:0.10.2")
     compileOnly(files("libs/optifine-1.8.9.jar"))
     
-    // Spotify Web API SDK
-    shadowImpl("se.michaelthelin.spotify:spotify-web-api-java:8.4.1")
-    shadowImpl("com.fasterxml.jackson.core:jackson-databind:2.15.2")
-    shadowImpl("com.fasterxml.jackson.core:jackson-core:2.15.2")
-    shadowImpl("com.fasterxml.jackson.core:jackson-annotations:2.15.2")
+    // Spotify API - Using Apache HttpClient (already included in Minecraft Forge) directly
+    // instead of SDK to avoid Java version conflicts
 }
 // Tasks:
 tasks.withType(JavaCompile::class) {
@@ -130,7 +127,8 @@ tasks.shadowJar {
             println("Copying dependencies into mod: ${it.files}")
         }
     }
-    // If you want to include other dependencies and shadow them, you can relocate them in here
+    // Relocate dependencies to avoid conflicts
     fun relocate(name: String) = relocate(name, "$baseGroup.deps.$name")
+    relocate("org.reflections")
 }
 tasks.assemble.get().dependsOn(tasks.remapJar)
