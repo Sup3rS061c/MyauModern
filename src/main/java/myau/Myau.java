@@ -13,6 +13,7 @@ import myau.module.ModuleManager;
 import myau.module.modules.*;
 import myau.property.Property;
 import myau.property.PropertyManager;
+import myau.util.font.FontManager;
 
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
@@ -203,6 +204,8 @@ public class Myau {
         Runtime.getRuntime().addShutdownHook(new Thread(config::save));
 
         AccountManager.init();
+
+        FontManager.initializeFonts();
 
         try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(Myau.class.getResourceAsStream("/version.json")), StandardCharsets.UTF_8)) {
             JsonObject modInfo = new JsonParser().parse(reader).getAsJsonObject();

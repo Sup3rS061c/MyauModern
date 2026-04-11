@@ -24,9 +24,6 @@ public class FontManager {
 
     private static int prevScale;
 
-    static {
-        initializeFonts();
-    }
 
     public static void initializeFonts() {
         Map<String, java.awt.Font> locationMap = new HashMap<>();
