@@ -436,7 +436,7 @@ public class Velocity extends Module {
 
             switch (mode.getValue()) {
                 case 25: // Delay Mode
-                    LongJump longJump = (LongJump) Myau.moduleManager.modules.get(LongAura.class);
+                    LongJump longJump = (LongJump) Myau.moduleManager.modules.get(LongJump.class);
                     if (!reverseFlag
                             && !canDelay()
                             && !isInLiquidOrWeb()
