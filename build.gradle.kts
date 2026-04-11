@@ -13,7 +13,7 @@ val version: String by project
 val mixinGroup = "$baseGroup.mixin"
 val modid: String by project
 val jarName: String by project
-val transformerFile = file("src/main/resources/accesstransformer.cfg")
+val transformerFile = file("src/main/resources/myau_at.cfg")
 // Toolchains:
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))

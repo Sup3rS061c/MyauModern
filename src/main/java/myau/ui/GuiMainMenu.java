@@ -1,6 +1,7 @@
 package myau.ui;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
@@ -450,7 +451,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
         if (this.func_183501_a())
         {
-            this.mouseClicked(mouseX, mouseY, mouseButton);
+            this.field_183503_M.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 
