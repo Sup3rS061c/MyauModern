@@ -6,10 +6,12 @@ import myau.event.EventManager;
 import myau.event.types.EventType;
 import myau.events.*;
 import myau.module.modules.NoHitDelay;
+import myau.ui.GuiMainMenu;
 import myau.util.IconUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.settings.KeyBinding;
@@ -27,6 +29,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.nio.ByteBuffer;
 
+import static myau.config.Config.mc;
+
 @SideOnly(Side.CLIENT)
 @Mixin(value = {Minecraft.class}, priority = 9999)
 public abstract class MixinMinecraft {
@@ -40,6 +44,9 @@ public abstract class MixinMinecraft {
     public EntityPlayerSP thePlayer;
     @Shadow
     public GuiScreen currentScreen;
+
+    @Shadow
+    public boolean skipRenderWorld;
 
     @Inject(
             method = {"startGame"},
@@ -173,6 +180,17 @@ public abstract class MixinMinecraft {
                 Display.setIcon(myauFavicon);
                 callbackInfo.cancel();
             }
+        }
+    }
+
+    @Inject(method = "displayGuiScreen", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;currentScreen:Lnet/minecraft/client/gui/GuiScreen;", shift = At.Shift.AFTER))
+    private void handleDisplayGuiScreen(CallbackInfo callbackInfo) {
+        if (currentScreen instanceof net.minecraft.client.gui.GuiMainMenu || (currentScreen != null && currentScreen.getClass().getName().startsWith("net.labymod") && currentScreen.getClass().getSimpleName().equals("ModGuiMainMenu"))) {
+            currentScreen = new GuiMainMenu();
+
+            ScaledResolution scaledResolution = new ScaledResolution(mc);
+            currentScreen.setWorldAndResolution(mc, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight());
+            skipRenderWorld = false;
         }
     }
 }
