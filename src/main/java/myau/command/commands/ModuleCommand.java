@@ -74,9 +74,15 @@ public class ModuleCommand extends Command {
     public List<String> tabComplete(ArrayList<String> args) {
         List<String> completions = new ArrayList<>();
 
-        if (args.size() <= 1) {
-            // 补全模块名（但ModuleCommand本身已经注册为模块名）
-            String partial = args.isEmpty() ? "" : args.get(0).toLowerCase(Locale.ROOT);
+        // 第一个参数应该是模块名
+        if (args.isEmpty()) {
+            // 列出所有模块名
+            for (Module module : Myau.moduleManager.modules.values()) {
+                completions.add(module.getName());
+            }
+        } else if (args.size() == 1) {
+            // 正在输入第一个参数（模块名）
+            String partial = args.get(0).toLowerCase(Locale.ROOT);
             for (Module module : Myau.moduleManager.modules.values()) {
                 String name = module.getName();
                 if (name.toLowerCase(Locale.ROOT).startsWith(partial)) {
@@ -84,7 +90,7 @@ public class ModuleCommand extends Command {
                 }
             }
         } else if (args.size() == 2) {
-            // 补全属性名
+            // 正在输入第二个参数（属性名）
             String partial = args.get(1).toLowerCase(Locale.ROOT);
             Module module = Myau.moduleManager.getModule(args.get(0));
             if (module != null) {
@@ -100,8 +106,8 @@ public class ModuleCommand extends Command {
                     }
                 }
             }
-        } else if (args.size() == 3) {
-            // 补全属性值（如果是布尔类型）
+        } else if (args.size() >= 3) {
+            // 正在输入第三个参数（属性值）
             Module module = Myau.moduleManager.getModule(args.get(0));
             if (module != null) {
                 Property<?> property = Myau.propertyManager.getProperty(module, args.get(1));

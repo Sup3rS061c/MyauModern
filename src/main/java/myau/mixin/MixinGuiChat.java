@@ -132,32 +132,26 @@ public abstract class MixinGuiChat extends GuiScreen {
     @Unique
     private static final String[] EMPTY_COMPLETE = new String[0];
 
-    @Unique
-    private String[] myau$latestAutoComplete = EMPTY_COMPLETE;
-
     /**
      * 处理客户端命令自动补全
      * 拦截原版服务器的自动补全请求，改为客户端命令补全
+     * 参考FDPClient实现
      */
     @Inject(method = "sendAutocompleteRequest", at = @At("HEAD"), cancellable = true)
     private void onSendAutocompleteRequest(String full, String ignored, CallbackInfo ci) {
-        if (Myau.commandManager.isTypingCommand(full)) {
-            // 获取自动补全建议
-            List<String> completions = Myau.commandManager.getCompletions(full);
+        if (Myau.commandManager.autoComplete(full)) {
+            // 标记为等待补全结果
+            waitingOnAutocomplete = true;
+            
+            // 获取最新的自动补全结果
+            String[] latest = Myau.commandManager.getLatestAutoComplete();
 
-            if (!completions.isEmpty()) {
-                // 将补全建议转换为Minecraft格式
-                myau$latestAutoComplete = completions.toArray(new String[0]);
+            
+            // 调用Minecraft的自动补全处理
+            onAutocompleteResponse(latest);
 
-                // 标记为等待补全结果
-                waitingOnAutocomplete = true;
-
-                // 调用Minecraft的自动补全处理
-                onAutocompleteResponse(myau$latestAutoComplete);
-
-                // 取消原版请求
-                ci.cancel();
-            }
+            // 取消原版请求
+            ci.cancel();
         }
     }
 

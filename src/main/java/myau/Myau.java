@@ -172,6 +172,7 @@ public class Myau {
         commandManager.commands.add(new ModuleCommand());
         commandManager.commands.add(new PlayerCommand());
         commandManager.commands.add(new ShowCommand());
+        commandManager.commands.add(new SpotifyCommand());
         commandManager.commands.add(new TargetCommand());
         commandManager.commands.add(new ToggleCommand());
         commandManager.commands.add(new VclipCommand());

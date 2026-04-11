@@ -80,6 +80,12 @@ dependencies {
 
     shadowImpl("org.reflections:reflections:0.10.2")
     compileOnly(files("libs/optifine-1.8.9.jar"))
+    
+    // Spotify Web API SDK
+    shadowImpl("se.michaelthelin.spotify:spotify-web-api-java:8.4.1")
+    shadowImpl("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+    shadowImpl("com.fasterxml.jackson.core:jackson-core:2.15.2")
+    shadowImpl("com.fasterxml.jackson.core:jackson-annotations:2.15.2")
 }
 // Tasks:
 tasks.withType(JavaCompile::class) {
