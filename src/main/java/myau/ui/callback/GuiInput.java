@@ -60,7 +60,7 @@ public class GuiInput extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         try {
             super.mouseClicked(mouseX,mouseY,mouseButton);
         } catch (IOException e) {

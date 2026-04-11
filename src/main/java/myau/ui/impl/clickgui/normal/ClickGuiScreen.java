@@ -268,7 +268,7 @@ public class ClickGuiScreen extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if (isClosing) return;
         super.mouseClicked(mouseX, mouseY, mouseButton);
         for (int i = frames.size() - 1; i >= 0; i--) {
