@@ -114,6 +114,12 @@ public class ChatTabs {
         }
     }
     
+    public static void setActiveTab(ChatTab chatTab) {
+        for (ChatTab tab : tabs) {
+            tab.setActive(tab == chatTab);
+        }
+    }
+    
     public static ChatTabType getActiveTab() {
         for (ChatTab tab : tabs) {
             if (tab.isActive()) return tab.getType();
