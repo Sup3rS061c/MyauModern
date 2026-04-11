@@ -96,7 +96,6 @@ public class ClickGuiScreen extends GuiScreen {
                 Myau.moduleManager.getModule(ChestESP.class),
                 Myau.moduleManager.getModule(Trajectories.class),
                 Myau.moduleManager.getModule(Radar.class),
-                Myau.moduleManager.getModule(FPScounter.class),
                 Myau.moduleManager.getModule(WaterMark.class),
                 Myau.moduleManager.getModule(HitParticleEffects.class),
                 Myau.moduleManager.getModule(DynamicIsland.class),

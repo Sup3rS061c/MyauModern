@@ -90,7 +90,6 @@ public class ClickGui extends GuiScreen {
         renderModules.add(Myau.moduleManager.getModule(ChestESP.class));
         renderModules.add(Myau.moduleManager.getModule(Trajectories.class));
         renderModules.add(Myau.moduleManager.getModule(Radar.class));
-        renderModules.add(Myau.moduleManager.getModule(FPScounter.class));
         renderModules.add(Myau.moduleManager.getModule(WaterMark.class));
         renderModules.add(Myau.moduleManager.getModule(HitParticleEffects.class));
         renderModules.add(Myau.moduleManager.getModule(DynamicIsland.class));
