@@ -66,23 +66,14 @@ public class CommandManager {
         boolean hasSpace = withoutPrefix.contains(" ");
 
         if (parts.length == 1 && !hasSpace) {
-            // 正在输入命令名 - 匹配命令名和模块名
+            // 正在输入命令名 - 匹配所有命令名
             String partialCommand = parts[0].toLowerCase();
 
-            // 首先匹配命令名
             for (Command command : commands) {
                 for (String name : command.names) {
                     if (name.toLowerCase().startsWith(partialCommand)) {
                         completions.add("." + name);
                     }
-                }
-            }
-
-            // 然后匹配模块名（用于模块命令）
-            for (Module module : Myau.moduleManager.modules.values()) {
-                String name = module.getName();
-                if (name.toLowerCase().startsWith(partialCommand)) {
-                    completions.add("." + name);
                 }
             }
         } else {
