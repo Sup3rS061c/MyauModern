@@ -66,12 +66,12 @@ public class SpotifyIntegration {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         saveConfig();
-        ChatUtil.printMessage("§a[Spotify] Credentials saved! Use .spotify auth to authenticate.");
+        ChatUtil.sendFormatted("§a[Spotify] Credentials saved! Use .spotify auth to authenticate.");
     }
     
     public void authenticate() {
         if (clientId.isEmpty() || clientSecret.isEmpty()) {
-            ChatUtil.printMessage("§c[Spotify] Please set Client ID and Secret first using .spotify setid <id> and .spotify setsecret <secret>");
+            ChatUtil.sendFormatted("§c[Spotify] Please set Client ID and Secret first using .spotify setup <id> <secret>");
             return;
         }
         
@@ -80,14 +80,14 @@ public class SpotifyIntegration {
             String authUrl = SPOTIFY_AUTH_URL + 
                 "?client_id=" + clientId +
                 "&response_type=code" +
-                "&redirect_uri=" + URLEncoder.encode(REDIRECT_URI, StandardCharsets.UTF_8) +
-                "&scope=" + URLEncoder.encode(scope, StandardCharsets.UTF_8);
+                "&redirect_uri=" + URLEncoder.encode(REDIRECT_URI, "UTF-8") +
+                "&scope=" + URLEncoder.encode(scope, "UTF-8");
             
             Desktop.getDesktop().browse(new URI(authUrl));
-            ChatUtil.printMessage("§a[Spotify] Opening browser for authentication...");
-            ChatUtil.printMessage("§e[Spotify] After authenticating, use .spotify token <code> with the code from the redirect URL");
+            ChatUtil.sendFormatted("§a[Spotify] Opening browser for authentication...");
+            ChatUtil.sendFormatted("§e[Spotify] After authenticating, use .spotify token <code> with the code from the redirect URL");
         } catch (Exception e) {
-            ChatUtil.printMessage("§c[Spotify] Failed to open browser: " + e.getMessage());
+            ChatUtil.sendFormatted("§c[Spotify] Failed to open browser: " + e.getMessage());
         }
     }
     
@@ -103,7 +103,7 @@ public class SpotifyIntegration {
             
             String body = "grant_type=authorization_code" +
                 "&code=" + code +
-                "&redirect_uri=" + URLEncoder.encode(REDIRECT_URI, StandardCharsets.UTF_8);
+                "&redirect_uri=" + URLEncoder.encode(REDIRECT_URI, "UTF-8");
             post.setEntity(new StringEntity(body));
             
             HttpResponse response = client.execute(post);
@@ -118,12 +118,12 @@ public class SpotifyIntegration {
                 tokenExpiryTime = System.currentTimeMillis() + (expiresIn * 1000);
                 authenticated = true;
                 saveConfig();
-                ChatUtil.printMessage("§a[Spotify] Successfully authenticated!");
+                ChatUtil.sendFormatted("§a[Spotify] Successfully authenticated!");
             } else {
-                ChatUtil.printMessage("§c[Spotify] Authentication failed: " + json);
+                ChatUtil.sendFormatted("§c[Spotify] Authentication failed: " + json);
             }
         } catch (Exception e) {
-            ChatUtil.printMessage("§c[Spotify] Error: " + e.getMessage());
+            ChatUtil.sendFormatted("§c[Spotify] Error: " + e.getMessage());
         }
     }
     
@@ -322,7 +322,7 @@ public class SpotifyIntegration {
         accessToken = "";
         refreshToken = "";
         saveConfig();
-        ChatUtil.printMessage("§a[Spotify] Disconnected!");
+        ChatUtil.sendFormatted("§a[Spotify] Disconnected!");
     }
     
     // Getters
