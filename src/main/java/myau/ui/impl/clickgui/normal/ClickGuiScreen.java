@@ -104,7 +104,8 @@ public class ClickGuiScreen extends GuiScreen {
                 Myau.moduleManager.getModule(TeamHealthDisplay.class),
                 Myau.moduleManager.getModule(SeasonDisplay.class),
                 Myau.moduleManager.getModule(Animations.class),
-                Myau.moduleManager.getModule(ChattingModule.class)
+                Myau.moduleManager.getModule(ChattingModule.class),
+                Myau.moduleManager.getModule(AntiScamming.class)
         );
 
         List<Module> playerModules = Arrays.asList(

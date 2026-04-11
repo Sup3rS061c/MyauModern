@@ -158,6 +158,7 @@ public class Myau {
         moduleManager.modules.put(AutoGapple.class, new AutoGapple());
         moduleManager.modules.put(HitParticleEffects.class, new HitParticleEffects());
         moduleManager.modules.put(ChattingModule.class, new ChattingModule());
+        moduleManager.modules.put(AntiScamming.class, new AntiScamming());
 
         commandManager.commands.add(new BindCommand());
         commandManager.commands.add(new ClickGuiCommand());
