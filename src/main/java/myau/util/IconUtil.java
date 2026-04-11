@@ -12,8 +12,8 @@ public class IconUtil {
     public static ByteBuffer[] getFavicon() {
         try {
             return new ByteBuffer[] {
-                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/minecraft/" + Myau.clientName + "/icon16x16.png")),
-                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/minecraft/" + Myau.clientName + "/icon32x32.png"))
+                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/" + Myau.clientName + "/icon16x16.png")),
+                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/" + Myau.clientName + "/icon32x32.png"))
             };
         }catch(IOException e) {
             e.printStackTrace();
