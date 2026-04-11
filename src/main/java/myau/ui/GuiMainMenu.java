@@ -450,7 +450,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
         if (this.func_183501_a())
         {
-            this.field_183503_M.mouseClicked(mouseX, mouseY, mouseButton);
+            this.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 
