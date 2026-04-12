@@ -131,13 +131,14 @@ public class AntiScamTestCommand extends Command {
     private void simulatePhishing() {
         ChatUtil.sendFormatted("§6[AntiScamTest] §e=== Simulating Phishing Links ===");
         
+        ChatUtil.sendFormatted("§7§oNote: hypixel.net and other safe domains are whitelisted");
+        
         String[] phishingLinks = {
             "Click here: hypixel-gift.com/free-rank",
             "Get free rank at hypixel-free.com",
             "Verify at hypìxel.net/verify (fake domain)",
             "Join: bit.ly/free-hypixel-rank",
             "Free items at minecraft-free.com",
-            "Real link: hypixel.net (should be safe)",
         };
 
         for (String link : phishingLinks) {
@@ -147,6 +148,25 @@ public class AntiScamTestCommand extends Command {
                 ChatUtil.sendFormatted("§a✓ Phishing detected!");
             } else {
                 ChatUtil.sendFormatted("§7○ No phishing detected (may be safe)");
+            }
+        }
+        
+        ChatUtil.sendFormatted("§a[AntiScamTest] §7=== Whitelisted URLs (Should be safe) ===");
+        String[] safeLinks = {
+            "Check out: https://hypixel.net/store for ranks",
+            "Visit https://sky.shiiyu.moe for stats",
+            "Download from https://github.com/user/repo",
+            "Join our Discord: https://discord.gg/community",
+            "Watch on https://youtube.com/channel",
+        };
+        
+        for (String link : safeLinks) {
+            ChatUtil.sendFormatted("§8[Test] §f" + link);
+            boolean detected = AntiScamming.testMessageForScam(link);
+            if (detected) {
+                ChatUtil.sendFormatted("§c✗ False positive - should be whitelisted!");
+            } else {
+                ChatUtil.sendFormatted("§a✓ Correctly whitelisted - no detection");
             }
         }
     }
@@ -186,7 +206,7 @@ public class AntiScamTestCommand extends Command {
         ChatUtil.sendFormatted("  §7- Strings containing: discord.com/api/webhooks");
         ChatUtil.sendFormatted("  §7- Suspicious field types: WebhookClient, TokenGrabber");
     }
-
+    
     @Override
     public List<String> tabComplete(ArrayList<String> args) {
         if (args.size() == 1) {

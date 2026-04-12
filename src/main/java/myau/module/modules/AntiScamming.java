@@ -77,6 +77,13 @@ public class AntiScamming extends Module {
     private final List<String> urlWhitelist = new ArrayList<>();
     private final List<Pattern> whitelistPatterns = new ArrayList<>();
     
+    // Official Discord servers - Only these invite codes are trusted
+    private final List<String> officialDiscordServers = new ArrayList<>();
+    private final List<String> verifiedDiscordServers = new ArrayList<>();
+    
+    // Discord invite pattern
+    private final Pattern discordInvitePattern = Pattern.compile("discord\\.gg/([a-zA-Z0-9-]+)", Pattern.CASE_INSENSITIVE);
+    
     // Statistics
     private int blockedMessages = 0;
     private int warningsShown = 0;
@@ -207,14 +214,6 @@ public class AntiScamming extends Module {
         urlWhitelist.add("modrinth.com");
         urlWhitelist.add("https://namemc.com");
         urlWhitelist.add("namemc.com");
-        urlWhitelist.add("https://wynncraft.com");
-        urlWhitelist.add("wynncraft.com");
-        urlWhitelist.add("https://pitpanda.com");
-        urlWhitelist.add("pitpanda.com");
-        urlWhitelist.add("https://sky.shiiyu.moe");
-        urlWhitelist.add("sky.shiiyu.moe");
-        urlWhitelist.add("plancke.io");
-        urlWhitelist.add("sky.lea.moe");
         urlWhitelist.add("https://minecraft-server-list.com");
         urlWhitelist.add("https://planetminecraft.com");
         urlWhitelist.add("planetminecraft.com");
@@ -231,6 +230,45 @@ public class AntiScamming extends Module {
         whitelistPatterns.add(Pattern.compile("^https?://[^/]*hypixel\\.net(/.*)?$", Pattern.CASE_INSENSITIVE));
         whitelistPatterns.add(Pattern.compile("^https?://[^/]*minecraft\\.net(/.*)?$", Pattern.CASE_INSENSITIVE));
         whitelistPatterns.add(Pattern.compile("^https?://[^/]*mojang\\.com(/.*)?$", Pattern.CASE_INSENSITIVE));
+        
+        // === OFFICIAL DISCORD SERVERS ===
+        // Only these invite codes are considered safe
+        // Hypixel Official
+        officialDiscordServers.add("hypixel");
+        
+        // Popular/Verified Minecraft servers
+        officialDiscordServers.add("wynncraft");
+        officialDiscordServers.add("mineplex"); // if still active
+        officialDiscordServers.add("hivemc");
+        officialDiscordServers.add("cubecraft");
+        officialDiscordServers.add("performium");
+        officialDiscordServers.add("munchymc");
+        officialDiscordServers.add("invadedlands");
+        officialDiscordServers.add("mineheroes");
+        officialDiscordServers.add("arkham");
+        officialDiscordServers.add("faithfulmc");
+        officialDiscordServers.add("minemenclub");
+        officialDiscordServers.add("lunarclient");
+        officialDiscordServers.add("badlion");
+        officialDiscordServers.add("cosmicpvp");
+        officialDiscordServers.add("deltapvp");
+        
+        // SkyBlock Communities
+        officialDiscordServers.add("skyblock");
+        officialDiscordServers.add("sbz");
+        officialDiscordServers.add("skytils");
+        officialDiscordServers.add("notenoughupdates");
+        officialDiscordServers.add("dsm");
+        
+        // Popular mod/client Discords
+        officialDiscordServers.add("forge");
+        officialDiscordServers.add("fabric");
+        officialDiscordServers.add("optifine");
+        officialDiscordServers.add("essential");
+        officialDiscordServers.add("5zig");
+        
+        // Tool/Utility
+        verifiedDiscordServers.addAll(officialDiscordServers);
     }
     
     /**
@@ -335,6 +373,17 @@ public class AntiScamming extends Module {
                     }
                 }
             }
+            
+            // Check for unverified Discord invites
+            Matcher discordMatcher = discordInvitePattern.matcher(message);
+            if (discordMatcher.find()) {
+                String inviteCode = discordMatcher.group(1).toLowerCase();
+                // Check if it's in our verified list
+                if (!verifiedDiscordServers.contains(inviteCode) && !officialDiscordServers.contains(inviteCode)) {
+                    // This is an unverified Discord invite
+                    return ScamType.UNVERIFIED_DISCORD;
+                }
+            }
         }
 
         // Check for Discord scams
@@ -419,6 +468,8 @@ public class AntiScamming extends Module {
                 return EnumChatFormatting.RED + "[⚠ AntiScam] " + EnumChatFormatting.YELLOW + "检测到钓鱼链接！请勿点击！";
             case DISCORD_SCAM:
                 return EnumChatFormatting.RED + "[⚠ AntiScam] " + EnumChatFormatting.YELLOW + "检测到Discord诈骗！不要输入邮箱或验证码！";
+            case UNVERIFIED_DISCORD:
+                return EnumChatFormatting.GOLD + "[⚠ AntiScam] " + EnumChatFormatting.YELLOW + "检测到未验证的Discord邀请！请谨慎点击！";
             case RAT_MOD:
                 return EnumChatFormatting.RED + "[⚠ AntiScam] " + EnumChatFormatting.YELLOW + "警告：可能是RAT模组！";
             case INFO_STEALER:
@@ -442,6 +493,11 @@ public class AntiScamming extends Module {
                 return EnumChatFormatting.RED + "Discord诈骗\n" +
                        EnumChatFormatting.GRAY + "假验证页面要求输入邮箱\n" +
                        EnumChatFormatting.GRAY + "Hypixel绝不会要求输入邮箱！";
+            case UNVERIFIED_DISCORD:
+                return EnumChatFormatting.GOLD + "未验证Discord邀请警告\n" +
+                       EnumChatFormatting.GRAY + "此Discord服务器不在白名单中\n" +
+                       EnumChatFormatting.GRAY + "官方服务器: hypixel, wynncraft, lunarclient 等\n" +
+                       EnumChatFormatting.YELLOW + "点击前请确认服务器来源可信！";
             case RAT_MOD:
                 return EnumChatFormatting.RED + "RAT模组警告\n" +
                        EnumChatFormatting.GRAY + "远程访问木马可能窃取你的账号\n" +
@@ -996,6 +1052,7 @@ public class AntiScamming extends Module {
         FAKE_RANK("Fake Rank Scam"),
         PHISHING_LINK("Phishing Link"),
         DISCORD_SCAM("Discord Scam"),
+        UNVERIFIED_DISCORD("Unverified Discord Invite"),
         RAT_MOD("RAT Mod"),
         INFO_STEALER("Info Stealer");
 

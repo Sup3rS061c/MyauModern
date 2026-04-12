@@ -194,4 +194,9 @@ public abstract class MixinMinecraft {
             skipRenderWorld = false;
         }
     }
+
+    @Inject(method = "createDisplay", at = @At(value = "INVOKE", target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V", shift = At.Shift.AFTER, remap = false))
+    private void createDisplay(CallbackInfo callbackInfo) {
+        Display.setTitle("MyauModern");
+    }
 }
