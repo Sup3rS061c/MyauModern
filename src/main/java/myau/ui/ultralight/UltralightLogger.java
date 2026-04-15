@@ -1,23 +1,29 @@
 package myau.ui.ultralight;
 
+import com.labymedia.ultralight.plugin.logging.UltralightLogLevel;
+
 /**
  * Logger implementation for Ultralight.
  */
-public class UltralightLogger extends com.labymedia.ultralight.databind.config.logger.Logger {
+public class UltralightLogger implements com.labymedia.ultralight.plugin.logging.UltralightLogger {
 
     @Override
-    public void logMessage(int level, String message) {
+    public void logMessage(UltralightLogLevel level, String message) {
         String prefix;
         switch (level) {
-            case 0: prefix = "[Ultralight] INFO"; break;
-            case 1: prefix = "[Ultralight] WARNING"; break;
-            default: prefix = "[Ultralight] ERROR"; break;
+            case INFO:
+                prefix = "[Ultralight] INFO";
+                break;
+            case WARNING:
+                prefix = "[Ultralight] WARNING";
+                break;
+            case ERROR:
+                prefix = "[Ultralight] ERROR";
+                break;
+            default:
+                prefix = "[Ultralight] DEBUG";
+                break;
         }
         System.out.println(prefix + ": " + message);
-    }
-
-    @Override
-    public void developerMessage(String message) {
-        System.out.println("[Ultralight] DEV: " + message);
     }
 }

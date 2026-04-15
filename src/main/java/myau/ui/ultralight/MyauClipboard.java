@@ -1,10 +1,17 @@
 package myau.ui.ultralight;
 
+import com.labymedia.ultralight.plugin.clipboard.UltralightClipboard;
+
 /**
  * Simple clipboard adapter for Ultralight.
  */
-public abstract class UltralightClipboard implements com.labymedia.ultralight.plugin.clipboard.UltralightClipboard {
+public class MyauClipboard implements UltralightClipboard {
     private String clipboardText = "";
+
+    @Override
+    public void clear() {
+        this.clipboardText = "";
+    }
 
     @Override
     public String readPlainText() {

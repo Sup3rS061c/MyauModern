@@ -2,19 +2,16 @@ package myau.ui.ultralight;
 
 import com.labymedia.ultralight.UltralightJava;
 import com.labymedia.ultralight.UltralightLoadException;
+import com.labymedia.ultralight.UltralightPlatform;
+import com.labymedia.ultralight.UltralightRenderer;
+import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
 import com.labymedia.ultralight.config.UltralightViewConfig;
 import com.labymedia.ultralight.gpu.UltralightGPUDriverNativeUtil;
 import com.labymedia.ultralight.gpu.UltralightOpenGLGPUDriverNative;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
-import com.labymedia.ultralight.UltralightPlatform;
-import com.labymedia.ultralight.UltralightRenderer;
-import com.labymedia.ultralight.UltralightView;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.shader.Framebuffer;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,9 +25,6 @@ import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
-
 /**
  * Ultralight Java View wrapper for Minecraft.
  * Provides HTML/CSS UI rendering using Ultralight web engine.
@@ -38,71 +32,53 @@ import static org.lwjgl.opengl.GL30.*;
 public class UltralightJavaView {
     private static boolean initialized = false;
     private static UltralightRenderer renderer;
-    private static UltralightPlatform platform;
     private static UltralightOpenGLGPUDriverNative gpuDriver;
+    private static long windowHandle = 0;
 
     private UltralightView view;
     private int width;
     private int height;
-    private long lastGarbageCollection;
 
     /**
      * Initialize Ultralight platform and renderer.
+     * 
+     * @param windowHandle The GLFW window handle (glfwGetCurrentContext())
      */
-    public static synchronized void init() throws UltralightLoadException {
+    public static synchronized void init(long windowHandle) throws UltralightLoadException {
         if (initialized) return;
+        
+        UltralightJavaView.windowHandle = windowHandle;
 
         Path nativesDir = extractNatives();
 
-        // Add natives to java.library.path
-        String libraryPath = System.getProperty("java.library.path");
-        String newPath = nativesDir.toAbsolutePath().toString();
-        if (libraryPath != null && !libraryPath.isEmpty()) {
-            newPath = libraryPath + File.pathSeparator + newPath;
-        }
-        System.setProperty("java.library.path", newPath);
-
-        // Reset library path for Java 8
-        try {
-            java.lang.reflect.Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-            fieldSysPath.setAccessible(true);
-            fieldSysPath.set(null, null);
-        } catch (Exception e) {
-            System.out.println("[Ultralight] Warning: Could not reset library path: " + e);
-        }
-
         // Load Ultralight Java native libraries
-        UltralightGPUDriverNativeUtil.extractNativeLibrary(nativesDir);
-        UltralightJava.extractNativeLibrary(nativesDir);
-
-        // Load in correct order
-        UltralightGPUDriverNativeUtil.load(nativesDir);
+        UltralightGPUDriverNativeUtil.extractAndLoadNativeLibraries(nativesDir);
         UltralightJava.load(nativesDir);
 
         // Configure platform
-        platform = UltralightPlatform.instance();
+        UltralightPlatform platform = UltralightPlatform.instance();
         platform.setConfig(new UltralightConfig()
                 .forceRepaint(false)
                 .fontHinting(FontHinting.SMOOTH));
 
         platform.usePlatformFontLoader();
-        platform.setFileSystem(new UltralightFileSystem());
-        platform.setLogger(new UltralightLogger());
-        platform.setClipboard(new UltralightClipboard());
+        platform.setFileSystem(new MyauFileSystem());
+        platform.setLogger(new MyauLogger());
+        platform.setClipboard(new MyauClipboard());
 
-        // Create renderer with OpenGL GPU driver
-        Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
+        // Create OpenGL GPU driver
+        // Parameters: windowHandle, vsync, glfwGetProcAddress as long
         gpuDriver = new UltralightOpenGLGPUDriverNative(
-                framebuffer.framebufferTexture,
-                true,
-                addr -> org.lwjgl.glfw.GLFW.glfwGetProcAddress(addr)
+                windowHandle,
+                false,  // no vsync
+                org.lwjgl.glfw.GLFWNativeGLX.glfwGetX11Display() // For Linux, use appropriate native handle
         );
 
         platform.setGPUDriver(gpuDriver);
         renderer = UltralightRenderer.create();
 
         initialized = true;
-        System.out.println("[Ultralight] Initialized successfully");
+        System.out.println("[Ultralight] Initialized successfully with window handle: " + windowHandle);
     }
 
     /**
@@ -173,7 +149,6 @@ public class UltralightJavaView {
         this.view = view;
         this.width = width;
         this.height = height;
-        this.lastGarbageCollection = System.currentTimeMillis();
     }
 
     /**
@@ -220,8 +195,11 @@ public class UltralightJavaView {
      * Evaluate JavaScript in the view.
      */
     public String evaluate(String script) {
-        try (JavascriptContextLock lock = view.lockJavascriptContext()) {
-            return lock.getContext().evaluateString(lock.getContext().getGlobalObject(), script, "eval", 0);
+        try {
+            return view.evaluateScript(script);
+        } catch (Exception e) {
+            System.err.println("[Ultralight] JS evaluation error: " + e.getMessage());
+            return null;
         }
     }
 
@@ -238,13 +216,8 @@ public class UltralightJavaView {
      * Update the renderer.
      */
     public void update() {
-        renderer.update();
-
-        if (System.currentTimeMillis() - lastGarbageCollection > 1000) {
-            try (JavascriptContextLock lock = view.lockJavascriptContext()) {
-                lock.getContext().garbageCollect();
-            }
-            lastGarbageCollection = System.currentTimeMillis();
+        if (renderer != null) {
+            renderer.update();
         }
     }
 
@@ -252,18 +225,13 @@ public class UltralightJavaView {
      * Render the view to the screen.
      */
     public void render() {
-        renderer.render();
-
-        glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
-
-        if (gpuDriver.hasCommandsPending()) {
+        if (renderer != null) {
+            renderer.render();
+        }
+        
+        if (gpuDriver != null && gpuDriver.hasCommandsPending()) {
             gpuDriver.drawCommandList();
         }
-
-        glPopAttrib();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
     }
 
     /**
@@ -292,7 +260,6 @@ public class UltralightJavaView {
      */
     public void dispose() {
         if (view != null) {
-            view.delete();
             view = null;
         }
     }
@@ -302,13 +269,11 @@ public class UltralightJavaView {
      */
     public static synchronized void shutdown() {
         if (renderer != null) {
-            renderer.delete();
+            renderer.purgeMemory();
             renderer = null;
         }
-        if (gpuDriver != null) {
-            gpuDriver.delete();
-            gpuDriver = null;
-        }
+        gpuDriver = null;
         initialized = false;
+        System.out.println("[Ultralight] Shutdown complete");
     }
 }
