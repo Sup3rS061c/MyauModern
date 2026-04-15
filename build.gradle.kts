@@ -60,6 +60,8 @@ repositories {
     maven("https://repo.spongepowered.org/maven/")
     // If you don't want to log in with your real minecraft account, remove this line
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    // Ultralight Java Maven Repository
+    maven("https://maven.labymedia.com/releases/")
 }
 val shadowImpl: Configuration by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
@@ -83,6 +85,19 @@ dependencies {
     
     // Spotify API - Using Apache HttpClient (already included in Minecraft Forge) directly
     // instead of SDK to avoid Java version conflicts
+
+    // ========================================
+    // Ultralight Java - HTML UI Support
+    // ========================================
+    // LWJGL 3 (required for Ultralight - separate from MC's LWJGL 2)
+    shadowImpl("org.lwjgl:lwjgl:3.3.4")
+    shadowImpl("org.lwjgl:lwjgl-glfw:3.3.4")
+    shadowImpl("org.lwjgl:lwjgl-opengl:3.3.4")
+
+    // Ultralight Java libraries
+    shadowImpl("com.labymedia:ultralight-java-base:0.4.12")
+    shadowImpl("com.labymedia:ultralight-java-gpu:0.4.12")
+    shadowImpl("com.labymedia:ultralight-java-databind:0.4.12")
 }
 // Tasks:
 tasks.withType(JavaCompile::class) {
@@ -130,5 +145,11 @@ tasks.shadowJar {
     // Relocate dependencies to avoid conflicts
     fun relocate(name: String) = relocate(name, "$baseGroup.deps.$name")
     relocate("org.reflections")
+    // Ultralight Java relocation
+    relocate("com.labymedia.ultralight")
+    relocate("org.lwjgl.glfw")
+    relocate("org.lwjgl")
+    relocate("org.lwjgl.opengl")
 }
+
 tasks.assemble.get().dependsOn(tasks.remapJar)

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenMyau+</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --primary-hover: #ff8255;
+            --bg-dark: rgba(15, 15, 20, 0.95);
+            --bg-card: rgba(25, 25, 35, 0.9);
+            --text: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: transparent;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            padding: 40px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 50%, #ffab7a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(255, 107, 53, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .logo .version {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 280px;
+        }
+
+        .btn {
+            position: relative;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #ff8255 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-hover) 0%, #ff9a6a 100%);
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.5);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(35, 35, 50, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+            padding: 14px 16px;
+            font-size: 14px;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .footer .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .user-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, #ff8255 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .shortcuts {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .shortcut {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .key {
+            padding: 2px 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Animations */
+        .btn {
+            animation: slideUp 0.4s ease-out backwards;
+        }
+
+        .btn:nth-child(1) { animation-delay: 0.1s; }
+        .btn:nth-child(2) { animation-delay: 0.15s; }
+        .btn:nth-child(3) { animation-delay: 0.2s; }
+        .btn:nth-child(4) { animation-delay: 0.25s; }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="user-info" id="userInfo">
+        <div class="avatar" id="avatar">?</div>
+        <div class="user-details">
+            <span class="username" id="username">Loading...</span>
+            <span class="user-status">Ready to play</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <h1>OpenMyau+</h1>
+            <div class="version">v<span id="modVersion">1.6+5</span> • Minecraft <span id="mcVersion">1.8.9</span></div>
+        </div>
+
+        <div class="menu-buttons">
+            <button class="btn btn-primary" onclick="myau.playSingleplayer()">
+                Singleplayer
+            </button>
+            <button class="btn btn-primary" onclick="myau.playMultiplayer()">
+                Multiplayer
+            </button>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="myau.openAltManager()">
+                    Alt Manager
+                </button>
+                <button class="btn btn-secondary" onclick="myau.openMods()">
+                    Mods
+                </button>
+            </div>
+
+            <button class="btn btn-secondary" onclick="myau.openOptions()">
+                Options
+            </button>
+
+            <button class="btn btn-secondary" onclick="myau.quit()" style="margin-top: 20px;">
+                Quit Game
+            </button>
+        </div>
+    </div>
+
+    <div class="shortcuts">
+        <div class="shortcut"><span class="key">SP</span> Singleplayer</div>
+        <div class="shortcut"><span class="key">MP</span> Multiplayer</div>
+        <div class="shortcut"><span class="key">ESC</span> Menu</div>
+    </div>
+
+    <div class="footer">
+        <div class="dot"></div>
+        <span>Ultralight Engine</span>
+    </div>
+
+    <script>
+        // Initialize user info
+        if (typeof myau !== 'undefined') {
+            document.getElementById('username').textContent = myau.getUsername();
+            document.getElementById('avatar').textContent = myau.getUsername().charAt(0).toUpperCase();
+            document.getElementById('modVersion').textContent = myau.getModVersion();
+            document.getElementById('mcVersion').textContent = myau.getMinecraftVersion();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // These would need to be handled via JS bridge if needed
+            // Ultralight handles most keyboard input automatically
+        });
+
+        // Add hover sound effects (optional)
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                // Could trigger a sound here via myau.playHoverSound()
+            });
+        });
+
+        // Console info
+        console.log('%c OpenMyau+ %c Ultralight UI ',
+            'background: #ff6b35; color: white; font-weight: bold; padding: 4px 8px;',
+            'background: #333; color: white; padding: 4px 8px;'
+        );
+    </script>
+</body>
+</html>

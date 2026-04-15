@@ -63,6 +63,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     private GuiScreen modUpdateNotification;
     private long initTime = System.currentTimeMillis();
 
+    // Ultralight UI toggle - set to true to use HTML UI instead of Java-drawn menu
+    private static final boolean USE_ULTRALIGHT_UI = false;
+
     public GuiMainMenu() {
         this.openGLWarning2 = field_96138_a;
         this.field_183502_L = false;
@@ -96,6 +99,12 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
 
     public void initGui()
     {
+        // If Ultralight UI is enabled, switch to it
+        if (USE_ULTRALIGHT_UI) {
+            this.mc.displayGuiScreen(new GuiMainMenuUltralight());
+            return;
+        }
+
         this.viewportTexture = new DynamicTexture(256, 256);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
