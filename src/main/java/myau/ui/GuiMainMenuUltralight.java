@@ -1,17 +1,14 @@
 package myau.ui;
 
 import com.labymedia.ultralight.UltralightLoadException;
-import com.labymedia.ultralight.databind.context.JavascriptContext;
 import myau.ui.ultralight.MyauJSBinding;
 import myau.ui.ultralight.UltralightJavaView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.settings.GameSettings;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 /**
  * GuiMainMenu using Ultralight HTML UI.
@@ -27,46 +24,26 @@ public class GuiMainMenuUltralight extends GuiScreen {
     private boolean initFailed = false;
     private String initError = null;
 
-    // Mouse tracking for Ultralight input
-    private int lastMouseX = 0;
-    private int lastMouseY = 0;
-    private boolean mouseDown = false;
-    private int currentMouseButton = -1;
-
-    // Keyboard state
-    private boolean[] keyStates = new boolean[256];
-
     /**
      * Initialize Ultralight.
      */
     @Override
     public void initGui() {
         try {
-            // Initialize Ultralight if not already done
-            if (!isUltralightInitialized()) {
-                UltralightJavaView.init();
-            }
+            // Initialize Ultralight
+            UltralightJavaView.init();
 
             // Create view matching screen size
             ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            int width = sr.getScaledWidth();
-            int height = sr.getScaledHeight();
+            int viewWidth = sr.getScaledWidth();
+            int viewHeight = sr.getScaledHeight();
 
-            ultralightView = UltralightJavaView.create(width, height);
+            ultralightView = UltralightJavaView.create(viewWidth, viewHeight);
 
             // Load HTML content
             ultralightView.loadFromResource(HTML_RESOURCE);
 
-            // Bind JavaScript interface
-            ultralightView.bind("myau", new MyauJSBinding());
-
-            // Bind databind context if available
-            try {
-                bindJavascriptContext(ultralightView);
-            } catch (Exception e) {
-                // Databind may not be available, continue without it
-                System.out.println("[GuiMainMenuUltralight] Databind not available: " + e.getMessage());
-            }
+            System.out.println("[GuiMainMenuUltralight] Loaded successfully");
 
         } catch (UltralightLoadException e) {
             initFailed = true;
@@ -79,16 +56,6 @@ public class GuiMainMenuUltralight extends GuiScreen {
             System.err.println("[GuiMainMenuUltralight] " + initError);
             e.printStackTrace();
         }
-    }
-
-    private void bindJavascriptContext(UltralightJavaView view) {
-        // This requires ultralight-java-databind
-        // The binding is done automatically when databind is on classpath
-    }
-
-    private boolean isUltralightInitialized() {
-        // Check if we can create a view (indicates renderer exists)
-        return false; // Always return false to ensure proper initialization
     }
 
     /**
@@ -123,32 +90,11 @@ public class GuiMainMenuUltralight extends GuiScreen {
      * Handle mouse clicks.
      */
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws java.io.IOException {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws java.io.IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         if (ultralightView != null && !initFailed) {
-            // Convert screen coordinates to view coordinates
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            int viewX = (int) (mouseX * sr.getScaledWidth() / (double) width);
-            int viewY = (int) (mouseY * sr.getScaledHeight() / (double) height);
-
-            ultralightView.fireMouseEvent(viewX, viewY, mouseButton, true);
-        }
-    }
-
-    /**
-     * Handle mouse release.
-     */
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-
-        if (ultralightView != null && !initFailed) {
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            int viewX = (int) (mouseX * sr.getScaledWidth() / (double) width);
-            int viewY = (int) (mouseY * sr.getScaledHeight() / (double) height);
-
-            ultralightView.fireMouseEvent(viewX, viewY, state, false);
+            // Ultralight handles its own mouse events via GPU driver
         }
     }
 
@@ -160,14 +106,7 @@ public class GuiMainMenuUltralight extends GuiScreen {
         super.handleMouseInput();
 
         if (ultralightView != null && !initFailed) {
-            int mouseX = Mouse.getEventX() * width / Minecraft.getMinecraft().displayWidth;
-            int mouseY = height - Mouse.getEventY() * height / Minecraft.getMinecraft().displayHeight - 1;
-
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            int viewX = (int) (mouseX * sr.getScaledWidth() / (double) width);
-            int viewY = (int) (mouseY * sr.getScaledHeight() / (double) height);
-
-            ultralightView.fireMouseMoveEvent(viewX, viewY);
+            // Ultralight handles mouse input internally
         }
     }
 
@@ -178,52 +117,9 @@ public class GuiMainMenuUltralight extends GuiScreen {
     protected void keyTyped(char typedChar, int keyCode) throws java.io.IOException {
         super.keyTyped(typedChar, keyCode);
 
-        if (ultralightView != null && !initFailed) {
-            ultralightView.fireKeyEvent(keyCode, true, typedChar);
-
-            // Handle ESC key to return to standard menu
-            if (keyCode == Keyboard.KEY_ESCAPE) {
-                Minecraft.getMinecraft().displayGuiScreen(null);
-            }
-        }
-    }
-
-    /**
-     * Handle keyboard events.
-     */
-    @Override
-    public void handleInput() throws java.io.IOException {
-        super.handleInput();
-
-        if (ultralightView != null && !initFailed) {
-            // Process keyboard events
-            while (Keyboard.next()) {
-                int keyCode = Keyboard.getEventKey();
-                char keyChar = Keyboard.getEventCharacter();
-                boolean pressed = Keyboard.getEventKeyState();
-
-                ultralightView.fireKeyEvent(keyCode, pressed, keyChar);
-
-                // Handle ESC
-                if (keyCode == Keyboard.KEY_ESCAPE && pressed) {
-                    Minecraft.getMinecraft().displayGuiScreen(null);
-                }
-            }
-        }
-    }
-
-    /**
-     * Handle scroll wheel.
-     */
-    @Override
-    public void onMouseWheel() {
-        super.onMouseWheel();
-
-        if (ultralightView != null && !initFailed) {
-            int scrollDelta = Mouse.getEventDWheel();
-            if (scrollDelta != 0) {
-                ultralightView.fireScrollEvent(0, scrollDelta > 0 ? 1 : -1);
-            }
+        // Handle ESC key to return to standard menu
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+            Minecraft.getMinecraft().displayGuiScreen(null);
         }
     }
 

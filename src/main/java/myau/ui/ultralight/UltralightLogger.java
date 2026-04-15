@@ -1,29 +1,23 @@
 package myau.ui.ultralight;
 
-import com.labymedia.ultralight.UltralightLogLevel;
-import com.labymedia.ultralight.UltralightLogger;
-
 /**
- * Ultralight logger implementation.
- * Logs Ultralight messages to Minecraft's logger.
+ * Logger implementation for Ultralight.
  */
-public class UltralightLogger extends UltralightLogger {
+public class UltralightLogger extends com.labymedia.ultralight.plugin.Logger {
 
     @Override
-    public void logMessage(UltralightLogLevel level, String message) {
-        String prefix = "[Ultralight] ";
+    public void logMessage(int level, String message) {
+        String prefix;
         switch (level) {
-            case ERROR:
-                System.err.println(prefix + "ERROR: " + message);
-                break;
-            case WARNING:
-                System.err.println(prefix + "WARNING: " + message);
-                break;
-            case INFO:
-                System.out.println(prefix + "INFO: " + message);
-                break;
-            default:
-                System.out.println(prefix + message);
+            case 0: prefix = "[Ultralight] INFO"; break;
+            case 1: prefix = "[Ultralight] WARNING"; break;
+            default: prefix = "[Ultralight] ERROR"; break;
         }
+        System.out.println(prefix + ": " + message);
+    }
+
+    @Override
+    public void developerMessage(String message) {
+        System.out.println("[Ultralight] DEV: " + message);
     }
 }
