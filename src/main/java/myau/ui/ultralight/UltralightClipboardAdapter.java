@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * Simple clipboard adapter for Ultralight.
  */
-public class UltralightClipboardAdapter extends com.labymedia.ultralight.plugin.Clipboard {
+public class UltralightClipboardAdapter extends com.labymedia.ultralight.databind.config.clipboard.Clipboard {
     private String clipboardText = "";
 
     @Override

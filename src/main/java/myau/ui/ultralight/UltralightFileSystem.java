@@ -6,7 +6,7 @@ import com.labymedia.ultralight.UltralightLoadException;
  * File system implementation for Ultralight.
  * Uses classpath resources for file access.
  */
-public class UltralightFileSystem extends com.labymedia.ultralight.plugin.FileSystem {
+public class UltralightFileSystem extends com.labymedia.ultralight.databind.config.filesystem.FileSystem {
 
     @Override
     public boolean fileExists(String path) {
@@ -14,31 +14,31 @@ public class UltralightFileSystem extends com.labymedia.ultralight.plugin.FileSy
     }
 
     @Override
-    public com.labymedia.ultralight.plugin.FileSystem.File openFile(String path, int flags) throws UltralightLoadException {
+    public com.labymedia.ultralight.databind.config.filesystem.FileSystem.File openFile(String path, int flags) throws UltralightLoadException {
         return null;
     }
 
     @Override
-    public void closeFile(com.labymedia.ultralight.plugin.FileSystem.File file) {
+    public void closeFile(com.labymedia.ultralight.databind.config.filesystem.FileSystem.File file) {
     }
 
     @Override
-    public long readFromFile(com.labymedia.ultralight.plugin.FileSystem.File file, long data, long length) {
+    public long readFromFile(com.labymedia.ultralight.databind.config.filesystem.FileSystem.File file, long data, long length) {
         return 0;
     }
 
     @Override
-    public long getFileSize(com.labymedia.ultralight.plugin.FileSystem.File file) {
+    public long getFileSize(com.labymedia.ultralight.databind.config.filesystem.FileSystem.File file) {
         return 0;
     }
 
     @Override
-    public boolean seekFile(com.labymedia.ultralight.plugin.FileSystem.File file, long position) {
+    public boolean seekFile(com.labymedia.ultralight.databind.config.filesystem.FileSystem.File file, long position) {
         return false;
     }
 
     @Override
-    public long tellFile(com.labymedia.ultralight.plugin.FileSystem.File file) {
+    public long tellFile(com.labymedia.ultralight.databind.config.filesystem.FileSystem.File file) {
         return 0;
     }
 }

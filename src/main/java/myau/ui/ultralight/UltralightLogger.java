@@ -3,7 +3,7 @@ package myau.ui.ultralight;
 /**
  * Logger implementation for Ultralight.
  */
-public class UltralightLogger extends com.labymedia.ultralight.plugin.Logger {
+public class UltralightLogger extends com.labymedia.ultralight.databind.config.logger.Logger {
 
     @Override
     public void logMessage(int level, String message) {
