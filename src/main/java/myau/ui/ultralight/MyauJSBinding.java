@@ -1,5 +1,6 @@
 package myau.ui.ultralight;
 
+import myau.ui.impl.clickgui.normal.ClickGuiScreen;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -38,8 +39,7 @@ public class MyauJSBinding {
 
     public void openMods() {
         Minecraft.getMinecraft().displayGuiScreen(
-                new net.minecraft.client.gui.GuiScreenMods(null,
-                        Minecraft.getMinecraft().gameSettings));
+                ClickGuiScreen.getInstance());
     }
 
     public void quit() {

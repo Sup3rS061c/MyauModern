@@ -1,11 +1,12 @@
 package myau.ui.ultralight;
 
 import com.labymedia.ultralight.plugin.logging.UltralightLogLevel;
+import com.labymedia.ultralight.plugin.logging.UltralightLogger;
 
 /**
  * Logger implementation for Ultralight.
  */
-public class UltralightLogger implements com.labymedia.ultralight.plugin.logging.UltralightLogger {
+public class MyauLogger implements UltralightLogger {
 
     @Override
     public void logMessage(UltralightLogLevel level, String message) {

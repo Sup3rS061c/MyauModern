@@ -1,0 +1,41 @@
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:/D:/.gradle/wrapper/dists/gradle-8.8-bin/dl7vupf4psengwqhwktix4v1/gradle-8.8/lib/native-platform-0.22-milestone-26.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+Starting a Gradle Daemon, 4 stopped Daemons could not be reused, use --status for details
+
+> Configure project :
+Architectury Loom: 0.10.0.5
+Installing access transformer
+
+> Task :compileJava
+注: SpongePowered MIXIN Annotation Processor Version=0.8.5
+注: Supported obfuscation types: ObfuscationServiceMCP supports [searge,notch] ObfuscationServiceFabric supports [official:intermediary,official:named,intermediary:official,intermediary:named,named:official,named:intermediary]
+注: Loading named:intermediary mappings from D:\.gradle\caches\essential-loom\1.8.9\de.oceanlabs.mcp.mcp_stable.1_8_9.22-1.8.9-forge-1.8.9-11.15.1.2318-1.8.9\mappings-mixin-srg.tiny
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing named:intermediary output TinyMappings to D:\IDEAProjects\MyauModern\build\loom-cache\mixin-map-de.oceanlabs.mcp.mcp_stable.1_8_9.22-1.8.9-forge-1.8.9-11.15.1.2318-1.8.9.0.tiny
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing named:intermediary output TinyMappings to D:\IDEAProjects\MyauModern\build\loom-cache\mixin-map-de.oceanlabs.mcp.mcp_stable.1_8_9.22-1.8.9-forge-1.8.9-11.15.1.2318-1.8.9.0.tiny
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing named:intermediary output TinyMappings to D:\IDEAProjects\MyauModern\build\loom-cache\mixin-map-de.oceanlabs.mcp.mcp_stable.1_8_9.22-1.8.9-forge-1.8.9-11.15.1.2318-1.8.9.0.tiny
+警告: PRIVATE overwrite method cannot reduce visibility of PUBLIC method in net.minecraft.client.gui.GuiNewChat
+警告: PRIVATE overwrite method cannot reduce visibility of PUBLIC method in net.minecraft.client.gui.GuiNewChat
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing refmap to D:\IDEAProjects\MyauModern\build\classes\java\main\mixins.myau.refmap.json
+注: Writing named:intermediary output TinyMappings to D:\IDEAProjects\MyauModern\build\loom-cache\mixin-map-de.oceanlabs.mcp.mcp_stable.1_8_9.22-1.8.9-forge-1.8.9-11.15.1.2318-1.8.9.0.tiny
+注: 某些输入文件使用了未经检查或不安全的操作。
+注: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+2 个警告
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 33s
+1 actionable task: 1 executed

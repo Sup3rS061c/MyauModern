@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -30,8 +31,9 @@ public class GuiMainMenuUltralight extends GuiScreen {
     @Override
     public void initGui() {
         try {
-            // Initialize Ultralight
-            UltralightJavaView.init();
+            // Initialize Ultralight with GLFW window handle
+            long windowHandle = GLFW.glfwGetCurrentContext();
+            UltralightJavaView.init(windowHandle);
 
             // Create view matching screen size
             ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());

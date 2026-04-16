@@ -11,6 +11,7 @@ import com.labymedia.ultralight.config.UltralightViewConfig;
 import com.labymedia.ultralight.gpu.UltralightGPUDriverNativeUtil;
 import com.labymedia.ultralight.gpu.UltralightOpenGLGPUDriverNative;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
+import org.lwjgl.glfw.GLFW;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,11 +68,11 @@ public class UltralightJavaView {
         platform.setClipboard(new MyauClipboard());
 
         // Create OpenGL GPU driver
-        // Parameters: windowHandle, vsync, glfwGetProcAddress as long
+        // Parameters: windowHandle, msaa, glfwGetProcAddress function pointer
         gpuDriver = new UltralightOpenGLGPUDriverNative(
                 windowHandle,
-                false,  // no vsync
-                org.lwjgl.glfw.GLFWNativeGLX.glfwGetX11Display() // For Linux, use appropriate native handle
+                false,  // no msaa
+                GLFW.Functions.GetProcAddress // native glfwGetProcAddress function pointer
         );
 
         platform.setGPUDriver(gpuDriver);

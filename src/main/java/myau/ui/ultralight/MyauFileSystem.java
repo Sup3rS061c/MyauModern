@@ -1,5 +1,7 @@
 package myau.ui.ultralight;
 
+import com.labymedia.ultralight.plugin.filesystem.UltralightFileSystem;
+
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -8,7 +10,7 @@ import java.nio.ByteBuffer;
  * File system implementation for Ultralight.
  * Uses classpath resources for file access.
  */
-public class UltralightFileSystem implements com.labymedia.ultralight.plugin.filesystem.UltralightFileSystem {
+public class MyauFileSystem implements UltralightFileSystem {
 
     @Override
     public boolean fileExists(String path) {
@@ -17,7 +19,6 @@ public class UltralightFileSystem implements com.labymedia.ultralight.plugin.fil
 
     @Override
     public long getFileSize(long fileHandle) {
-        // fileHandle is actually a URL encoded as long
         return -1;
     }
 
@@ -49,7 +50,6 @@ public class UltralightFileSystem implements com.labymedia.ultralight.plugin.fil
 
     @Override
     public long openFile(String path, boolean forWriting) {
-        // Return 0 for success (fileHandle), -1 for failure
         URL resource = getClass().getResource(path);
         if (resource != null && !forWriting) {
             return System.identityHashCode(resource);

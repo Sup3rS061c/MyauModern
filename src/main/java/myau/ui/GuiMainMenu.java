@@ -64,7 +64,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     private long initTime = System.currentTimeMillis();
 
     // Ultralight UI toggle - set to true to use HTML UI instead of Java-drawn menu
-    private static final boolean USE_ULTRALIGHT_UI = false;
+    private static final boolean USE_ULTRALIGHT_UI = true;
 
     public GuiMainMenu() {
         this.openGLWarning2 = field_96138_a;
