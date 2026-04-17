@@ -1,15 +1,13 @@
 package myau.ui;
 
 import com.labymedia.ultralight.UltralightLoadException;
-import myau.ui.ultralight.MyauJSBinding;
+import myau.ui.ultralight.GLFW3Helper;
 import myau.ui.ultralight.UltralightJavaView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 /**
  * GuiMainMenu using Ultralight HTML UI.
@@ -19,7 +17,7 @@ import org.lwjgl.input.Mouse;
  */
 public class GuiMainMenuUltralight extends GuiScreen {
 
-    private static final String HTML_RESOURCE = "/assets/myau/html/mainmenu.html";
+    private static final String HTML_RESOURCE = "/assets/minecraft.myau/html/mainmenu.html";
 
     private UltralightJavaView ultralightView;
     private boolean initFailed = false;
@@ -32,7 +30,8 @@ public class GuiMainMenuUltralight extends GuiScreen {
     public void initGui() {
         try {
             // Initialize Ultralight with GLFW window handle
-            long windowHandle = GLFW.glfwGetCurrentContext();
+            // Use reflection helper to avoid LWJGL2/3 classloader VerifyError
+            long windowHandle = GLFW3Helper.getCurrentContext();
             UltralightJavaView.init(windowHandle);
 
             // Create view matching screen size

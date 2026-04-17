@@ -64,7 +64,7 @@ public class MyauFileSystem implements UltralightFileSystem {
 
     @Override
     public long readFromFile(long fileHandle, ByteBuffer data, long length) {
-        URL resource = getClass().getResource("/assets/myau/html/mainmenu.html");
+        URL resource = getClass().getResource("/assets/minecraft.myau/html/mainmenu.html");
         if (resource == null) {
             return -1;
         }

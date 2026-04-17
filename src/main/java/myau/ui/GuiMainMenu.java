@@ -64,7 +64,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     private long initTime = System.currentTimeMillis();
 
     // Ultralight UI toggle - set to true to use HTML UI instead of Java-drawn menu
-    private static final boolean USE_ULTRALIGHT_UI = true;
+    private static final boolean USE_ULTRALIGHT_UI = false;
 
     public GuiMainMenu() {
         this.openGLWarning2 = field_96138_a;
@@ -394,7 +394,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         MainMenu.draw(initTime);
         GlStateManager.enableAlpha();
 
-            FontProcess.getScaledFont("sans", 3.0f).drawCenteredString("OpenMyau+", this.width / 2, 35, -1);
+            FontProcess.getScaledFont("sans", 3.0f).drawCenteredString("MyauModern", this.width / 2, 35, -1);
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();

@@ -8,10 +8,6 @@ import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
 import com.labymedia.ultralight.config.UltralightViewConfig;
-import com.labymedia.ultralight.gpu.UltralightGPUDriverNativeUtil;
-import com.labymedia.ultralight.gpu.UltralightOpenGLGPUDriverNative;
-import com.labymedia.ultralight.javascript.JavascriptContextLock;
-import org.lwjgl.glfw.GLFW;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -29,11 +25,17 @@ import java.util.zip.ZipInputStream;
 /**
  * Ultralight Java View wrapper for Minecraft.
  * Provides HTML/CSS UI rendering using Ultralight web engine.
+ * 
+ * This implementation uses CPU/software rendering to avoid LWJGL2/LWJGL3 OpenGL conflicts
+ * that occur when trying to use GPU-accelerated Ultralight in Minecraft 1.8.9.
+ * 
+ * To enable GPU acceleration in the future (when LWJGL3 isolation is solved):
+ * 1. Create a separate mod jar with LWJGL3, loaded in an isolated ClassLoader
+ * 2. Use UltralightOpenGLGPUDriverNative when that ClassLoader is available
  */
 public class UltralightJavaView {
     private static boolean initialized = false;
     private static UltralightRenderer renderer;
-    private static UltralightOpenGLGPUDriverNative gpuDriver;
     private static long windowHandle = 0;
 
     private UltralightView view;
@@ -42,8 +44,9 @@ public class UltralightJavaView {
 
     /**
      * Initialize Ultralight platform and renderer.
+     * Uses CPU rendering to avoid LWJGL conflicts.
      * 
-     * @param windowHandle The GLFW window handle (glfwGetCurrentContext())
+     * @param windowHandle The GLFW window handle (unused in CPU mode, kept for future GPU mode)
      */
     public static synchronized void init(long windowHandle) throws UltralightLoadException {
         if (initialized) return;
@@ -53,7 +56,6 @@ public class UltralightJavaView {
         Path nativesDir = extractNatives();
 
         // Load Ultralight Java native libraries
-        UltralightGPUDriverNativeUtil.extractAndLoadNativeLibraries(nativesDir);
         UltralightJava.load(nativesDir);
 
         // Configure platform
@@ -67,19 +69,14 @@ public class UltralightJavaView {
         platform.setLogger(new MyauLogger());
         platform.setClipboard(new MyauClipboard());
 
-        // Create OpenGL GPU driver
-        // Parameters: windowHandle, msaa, glfwGetProcAddress function pointer
-        gpuDriver = new UltralightOpenGLGPUDriverNative(
-                windowHandle,
-                false,  // no msaa
-                GLFW.Functions.GetProcAddress // native glfwGetProcAddress function pointer
-        );
+        // CPU rendering mode - no GPU driver needed
+        // Ultralight will render to an internal bitmap that we can blit to screen
+        System.out.println("[Ultralight] Using CPU/software rendering mode");
 
-        platform.setGPUDriver(gpuDriver);
         renderer = UltralightRenderer.create();
 
         initialized = true;
-        System.out.println("[Ultralight] Initialized successfully with window handle: " + windowHandle);
+        System.out.println("[Ultralight] Initialized successfully");
     }
 
     /**
@@ -90,7 +87,7 @@ public class UltralightJavaView {
             Path nativesDir = Paths.get("ultralight-natives");
             Files.createDirectories(nativesDir);
 
-            String zipPath = "/assets/myau/runtime_natives.zip";
+            String zipPath = "/assets/minecraft.myau/runtime_natives.zip";
             InputStream zipStream = UltralightJavaView.class.getResourceAsStream(zipPath);
 
             if (zipStream == null) {
@@ -103,6 +100,17 @@ public class UltralightJavaView {
                     Path outPath = nativesDir.resolve(entry.getName());
                     if (!entry.isDirectory()) {
                         Files.createDirectories(outPath.getParent());
+                        
+                        // Skip extraction if file already exists (e.g., locked by another process)
+                        if (Files.exists(outPath)) {
+                            System.out.println("[Ultralight] Skipping existing file: " + entry.getName());
+                            // Still need to consume the zip entry data
+                            byte[] buffer = new byte[8192];
+                            while (zis.read(buffer) != -1) { /* consume */ }
+                            zis.closeEntry();
+                            continue;
+                        }
+                        
                         try (FileOutputStream fos = new FileOutputStream(outPath.toFile())) {
                             copyStream(zis, fos);
                         }
@@ -137,9 +145,10 @@ public class UltralightJavaView {
             throw new IllegalStateException("UltralightJavaView not initialized. Call init() first.");
         }
 
+        // CPU rendering mode - isAccelerated = false
         UltralightView ultralightView = renderer.createView(width, height,
                 new UltralightViewConfig()
-                        .isAccelerated(true)
+                        .isAccelerated(false)  // CPU mode
                         .initialDeviceScale(1.0)
                         .isTransparent(true));
 
@@ -223,15 +232,13 @@ public class UltralightJavaView {
     }
 
     /**
-     * Render the view to the screen.
+     * Render the view.
+     * In CPU mode, Ultralight handles rendering internally.
+     * This method triggers the render loop.
      */
     public void render() {
         if (renderer != null) {
             renderer.render();
-        }
-        
-        if (gpuDriver != null && gpuDriver.hasCommandsPending()) {
-            gpuDriver.drawCommandList();
         }
     }
 
@@ -273,7 +280,6 @@ public class UltralightJavaView {
             renderer.purgeMemory();
             renderer = null;
         }
-        gpuDriver = null;
         initialized = false;
         System.out.println("[Ultralight] Shutdown complete");
     }

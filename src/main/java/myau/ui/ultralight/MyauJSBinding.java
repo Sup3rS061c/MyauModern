@@ -8,11 +8,11 @@ import net.minecraft.client.Minecraft;
  * Use view.evaluate() to call methods from JavaScript.
  *
  * Usage in HTML/JS:
- *   window.myau.playSingleplayer();
- *   window.myau.playMultiplayer();
- *   window.myau.openOptions();
- *   window.myau.quit();
- *   window.myau.getUsername();
+ *   window.minecraft.myau.playSingleplayer();
+ *   window.minecraft.myau.playMultiplayer();
+ *   window.minecraft.myau.openOptions();
+ *   window.minecraft.myau.quit();
+ *   window.minecraft.myau.getUsername();
  */
 public class MyauJSBinding {
 

@@ -1,4 +1,6 @@
 import org.apache.commons.lang3.SystemUtils
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     idea
     java
@@ -6,6 +8,7 @@ plugins {
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
+
 //Constants:
 val baseGroup: String by project
 val mcVersion: String by project
@@ -14,10 +17,12 @@ val mixinGroup = "$baseGroup.mixin"
 val modid: String by project
 val jarName: String by project
 val transformerFile = file("src/main/resources/myau_at.cfg")
+
 // Toolchains:
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
+
 // Minecraft configuration:
 loom {
     log4jConfigs.from(file("log4j2.xml"))
@@ -54,6 +59,7 @@ loom {
 sourceSets.main {
     output.setResourcesDir(sourceSets.main.flatMap { it.java.classesDirectory })
 }
+
 // Dependencies:
 repositories {
     mavenCentral()
@@ -87,18 +93,19 @@ dependencies {
     // instead of SDK to avoid Java version conflicts
 
     // ========================================
-    // Ultralight Java - HTML UI Support
+    // Ultralight Java - HTML UI Support (CPU Mode)
     // ========================================
-    // LWJGL 3 (required for Ultralight - separate from MC's LWJGL 2)
-    shadowImpl("org.lwjgl:lwjgl:3.3.4")
-    shadowImpl("org.lwjgl:lwjgl-glfw:3.3.4")
-    shadowImpl("org.lwjgl:lwjgl-opengl:3.3.4")
-
-    // Ultralight Java libraries
+    // Note: CPU rendering mode is used to avoid LWJGL2/LWJGL3 OpenGL conflicts
+    // GPU acceleration can be re-enabled in the future with isolated ClassLoader
+    
+    // Ultralight Java libraries (base only, no GPU driver)
     shadowImpl("com.labymedia:ultralight-java-base:0.4.12")
-    shadowImpl("com.labymedia:ultralight-java-gpu:0.4.12")
     shadowImpl("com.labymedia:ultralight-java-databind:0.4.12")
+    
+    // Note: GPU driver (ultralight-java-gpu) and LWJGL3 removed to avoid conflicts
+    // with Minecraft's LWJGL 2.9.4
 }
+
 // Tasks:
 tasks.withType(JavaCompile::class) {
     options.encoding = "UTF-8"
@@ -147,9 +154,6 @@ tasks.shadowJar {
     relocate("org.reflections")
     // Ultralight Java relocation
     relocate("com.labymedia.ultralight")
-    relocate("org.lwjgl.glfw")
-    relocate("org.lwjgl")
-    relocate("org.lwjgl.opengl")
 }
 
 tasks.assemble.get().dependsOn(tasks.remapJar)

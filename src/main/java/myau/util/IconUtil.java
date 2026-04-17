@@ -1,7 +1,5 @@
 package myau.util;
 
-import myau.Myau;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -12,8 +10,8 @@ public class IconUtil {
     public static ByteBuffer[] getFavicon() {
         try {
             return new ByteBuffer[] {
-                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/myau/icon16x16.png")),
-                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/myau/icon32x32.png"))
+                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/minecraft.myau/icon16x16.png")),
+                    readImageToBuffer(IconUtil.class.getResourceAsStream("/assets/minecraft.myau/icon32x32.png"))
             };
         }catch(IOException e) {
             e.printStackTrace();
